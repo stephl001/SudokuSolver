@@ -14,35 +14,35 @@ namespace SudokuSolverTests
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void TestInvalidCreationX()
         {
-            var s = new SudokuSquare(-1, 0, 0);
+            new SudokuSquare(-1, 0, 0);
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void TestInvalidCreationY()
         {
-            var s = new SudokuSquare(0, -1, 0);
+            new SudokuSquare(0, -1, 0);
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void TestInvalidRangeCreationY()
         {
-            var s = new SudokuSquare(0, 9, 0);
+            new SudokuSquare(0, 9, 0);
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void TestInvalidRangeCreationX()
         {
-            var s = new SudokuSquare(9, 5, 0);
+            new SudokuSquare(9, 5, 0);
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void TestInvalidRangeCreationValue()
         {
-            var s = new SudokuSquare(3, 5, 9);
+            new SudokuSquare(3, 5, 9);
         }
 
         [TestMethod]
@@ -51,7 +51,7 @@ namespace SudokuSolverTests
             var s = new SudokuSquare(3, 5, 4);
             Assert.IsTrue(s.IsValueSet);
             Assert.AreEqual(4, s.Value);
-            Assert.IsTrue(s.Candidates.Length == 0);
+            Assert.IsTrue(s.Candidates.Count == 0);
             Assert.AreEqual(3, s.X);
             Assert.AreEqual(5, s.Y);
         }
@@ -60,63 +60,63 @@ namespace SudokuSolverTests
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void TestInvalidCreationCandidatesX()
         {
-            var s = new SudokuSquare(-1, 0, new int[] { 1 });
+            new SudokuSquare(-1, 0, new int[] { 1 });
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void TestInvalidCreationCandidatesY()
         {
-            var s = new SudokuSquare(0, -1, new int[] { 1 });
+            new SudokuSquare(0, -1, new int[] { 1 });
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void TestInvalidRangeCreationCandidatesY()
         {
-            var s = new SudokuSquare(0, 9, new int[] { 1 });
+            new SudokuSquare(0, 9, new int[] { 1 });
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void TestInvalidRangeCreationCandidatesX()
         {
-            var s = new SudokuSquare(9, 5, new int[] { 1 });
+            new SudokuSquare(9, 5, new int[] { 1 });
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
         public void TestInvalidCreationCandidates()
         {
-            var s = new SudokuSquare(3, 5, null);
+            new SudokuSquare(3, 5, null);
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void TestInvalidCreationTooMuchCandidates()
         {
-            var s = new SudokuSquare(3, 5, new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 });
+            new SudokuSquare(3, 5, new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 });
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void TestInvalidCreationCandidateValueTooSmall()
         {
-            var s = new SudokuSquare(3, 5, new int[] { 2, 4, 0 });
+            new SudokuSquare(3, 5, new int[] { 2, 4, 0 });
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void TestInvalidCreationCandidateValueTooBig()
         {
-            var s = new SudokuSquare(3, 5, new int[] { 2, 4, 10 });
+            new SudokuSquare(3, 5, new int[] { 2, 4, 10 });
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         public void TestInvalidCreationCandidateDuplicateValues()
         {
-            var s = new SudokuSquare(3, 5, new int[] { 2, 4, 5, 2 });
+            new SudokuSquare(3, 5, new int[] { 2, 4, 5, 2 });
         }
 
         [TestMethod]
@@ -146,7 +146,15 @@ namespace SudokuSolverTests
         public void TestClearCandidatesWithValue()
         {
             var s = new SudokuSquare(2, 2, 3);
-            var s2 = s.ClearCandidates(new int[] { 1, 2 });
+            s.ClearCandidates(new int[] { 1, 2 });
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void TestKeepCandidatesWithValue()
+        {
+            var s = new SudokuSquare(2, 2, 3);
+            s.KeepCandidates(new int[] { 1, 2 });
         }
 
         [TestMethod]
@@ -249,6 +257,50 @@ namespace SudokuSolverTests
             Assert.AreNotEqual(s1, s4);
             Assert.AreEqual(s1, s2);
             Assert.AreEqual(s1, s3);
+        }
+
+        [TestMethod]
+        public void TestClearCandidates()
+        {
+            var s1 = new SudokuSquare(2, 2, new int[] { 1, 5, 6, 8 });
+            SudokuSquare newSquare = s1.ClearCandidates(new int[] { 5, 6 });
+            SudokuSquare newSquare2 = s1.ClearCandidates(new int[] { 3, 9 });
+
+            Assert.AreEqual(new SudokuSquare(2, 2, new int[] { 1, 8 }), newSquare);
+            Assert.AreEqual(s1, newSquare2);
+
+            //Clearing null candidates is same as clearing nothing.
+            Assert.AreEqual(s1, s1.ClearCandidates(null));
+        }
+
+        [TestMethod]
+        public void TestKeepCandidates()
+        {
+            var s1 = new SudokuSquare(2, 2, new int[] { 1, 5, 6, 8 });
+            SudokuSquare newSquare = s1.KeepCandidates(new int[] { 5, 6 });
+            SudokuSquare newSquare2 = s1.KeepCandidates(new int[] { 1, 7, 9 });
+            SudokuSquare newSquare3 = s1.KeepCandidates(new int[] { 2, 7, 9 });
+
+            Assert.AreEqual(new SudokuSquare(2, 2, new int[] { 5, 6 }), newSquare);
+            Assert.AreEqual(new SudokuSquare(2, 2, new int[] { 1 }), newSquare2);
+            Assert.AreEqual(new SudokuSquare(2, 2, new int[] { }), newSquare3);
+
+            //Keeping null candidates is same as keeping everything.
+            Assert.AreEqual(s1, s1.KeepCandidates(null));
+        }
+
+        [TestMethod]
+        public void TestEmptySquare()
+        {
+            var s1 = new SudokuSquare(2, 1, 0);
+            var s2 = new SudokuSquare(2, 1, new int[] { });
+
+            Assert.AreEqual(s1, s2);
+            Assert.IsTrue(s1.IsEmpty);
+
+            var s3 = new SudokuSquare(3, 4, new int[] { 2, 5, 8, 9 });
+            Assert.IsFalse(s3.IsEmpty);
+            Assert.IsTrue(s3.KeepCandidates(1).IsEmpty);
         }
     }
 }

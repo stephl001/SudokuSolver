@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 
@@ -9,7 +10,7 @@ namespace SudokuSolver
     {
         private const int MaxRange = 9;
         private static readonly int[] EmptyCandidates = new int[] {};
-
+        
         private readonly int _hash;
 
         public SudokuSquare(int x, int y, int value)
@@ -44,9 +45,11 @@ namespace SudokuSolver
             Value = value;
 
             Array.Sort(candidates);
-            Candidates = candidates;
+            Candidates = Array.AsReadOnly(candidates);
 
             _hash = CalculateHash();
+
+            IsEmpty = ((value == 0) && !candidates.Any());
         }
 
         private int CalculateHash()
@@ -73,18 +76,28 @@ namespace SudokuSolver
 
         public bool IsValueSet { get { return Value > 0; } }
 
-        public int[] Candidates { get; }
+        public bool IsEmpty { get; }
 
-        public SudokuSquare ClearCandidates(int[] candidates)
+        public ReadOnlyCollection<int> Candidates { get; }
+
+        public SudokuSquare ClearCandidates(params int[] candidatesToExclude)
         {
+            candidatesToExclude = candidatesToExclude ?? new int[] { };
+
             if (IsValueSet)
                 throw new InvalidOperationException("You cannot clear candidates on a square that has its value set.");
-            throw new NotImplementedException();
+
+            return new SudokuSquare(X, Y, Candidates.Except(candidatesToExclude).ToArray());
         }
 
-        public SudokuSquare KeepCandidates(int[] candidates)
+        public SudokuSquare KeepCandidates(params int[] candidatesToKeep)
         {
-            throw new NotImplementedException();
+            candidatesToKeep = candidatesToKeep ?? Enumerable.Range(1, MaxRange).ToArray();
+
+            if (IsValueSet)
+                throw new InvalidOperationException("You cannot keep candidates on a square that has its value set.");
+
+            return new SudokuSquare(X, Y, Candidates.Intersect(candidatesToKeep).ToArray());
         }
 
         public override bool Equals(object obj)
