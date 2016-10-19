@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace SudokuSolver
@@ -7,6 +9,8 @@ namespace SudokuSolver
     {
         private const int MaxRange = 9;
         private static readonly int[] EmptyCandidates = new int[] {};
+
+        private readonly int _hash;
 
         public SudokuSquare(int x, int y, int value)
             : this(x, y, value, EmptyCandidates)
@@ -38,7 +42,27 @@ namespace SudokuSolver
             X = x;
             Y = y;
             Value = value;
+
+            Array.Sort(candidates);
             Candidates = candidates;
+
+            _hash = CalculateHash();
+        }
+
+        private int CalculateHash()
+        {
+            int hash = 0;
+            hash |= (X << 8);
+            hash |= (Y << 4);
+            hash |= Value;
+
+            if (!IsValueSet && Candidates.Any())
+            {
+                int partialHash = Candidates.Aggregate(0, (bits, c) => bits |= (1 << (c-1)));
+                hash |= (partialHash << 16);
+            }
+
+            return hash;
         }
 
         public int X { get; }
@@ -53,6 +77,8 @@ namespace SudokuSolver
 
         public SudokuSquare ClearCandidates(int[] candidates)
         {
+            if (IsValueSet)
+                throw new InvalidOperationException("You cannot clear candidates on a square that has its value set.");
             throw new NotImplementedException();
         }
 
@@ -63,12 +89,12 @@ namespace SudokuSolver
 
         public override bool Equals(object obj)
         {
-            return base.Equals(obj);
+            return Equals(obj as SudokuSquare);
         }
 
         public override int GetHashCode()
         {
-            return base.GetHashCode();
+            return _hash;
         }
 
         public override string ToString()
@@ -78,7 +104,19 @@ namespace SudokuSolver
 
         public bool Equals(SudokuSquare other)
         {
-            throw new NotImplementedException();
+            if (other == null)
+                return false;
+
+            if ((X != other.X) || (Y != other.Y))
+                return false;
+
+            if (IsValueSet != other.IsValueSet)
+                return false;
+
+            if (IsValueSet)
+                return (Value == other.Value);
+
+            return Candidates.SequenceEqual(other.Candidates);
         }
     }
 }
