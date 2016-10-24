@@ -50,6 +50,8 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="PuzzleTest.cs" />
+    <Compile Include="SudokuPuzzleTests.cs" />
     <Compile Include="SudokuSquareTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -58,6 +60,18 @@
       <Project>{953e4743-b51d-434f-a4bc-05c0d2fd5c77}</Project>
       <Name>SudokuSolver</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="puzzles\easy.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="puzzles\invalidrow.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="puzzles\invalidbox.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="puzzles\invalidcolumn.txt" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

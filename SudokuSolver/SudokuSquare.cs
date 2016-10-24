@@ -9,6 +9,7 @@ namespace SudokuSolver
     public sealed class SudokuSquare : IEquatable<SudokuSquare>
     {
         private const int MaxRange = 9;
+        private const int SqrtMaxRange = 3;
         private static readonly int[] EmptyCandidates = new int[] {};
         
         private readonly int _hash;
@@ -29,7 +30,7 @@ namespace SudokuSolver
                 throw new ArgumentOutOfRangeException($"{nameof(x)} must be greater or equal than 0 and lower than {MaxRange}.");
             if (y < 0 || y >= MaxRange)
                 throw new ArgumentOutOfRangeException($"{nameof(y)} must be greater or equal than 0 and lower than {MaxRange}.");
-            if (value >= MaxRange)
+            if ((value > MaxRange) || (value < 0))
                 throw new ArgumentOutOfRangeException($"{nameof(value)} must be greater or equal than 0 and lower than {MaxRange}.");
             if (candidates == null)
                 throw new ArgumentNullException(nameof(candidates));
@@ -42,6 +43,7 @@ namespace SudokuSolver
 
             X = x;
             Y = y;
+            Box = ((y / SqrtMaxRange) + ((x / SqrtMaxRange)*SqrtMaxRange));
             Value = value;
 
             Array.Sort(candidates);
@@ -71,6 +73,8 @@ namespace SudokuSolver
         public int X { get; }
 
         public int Y { get; }
+
+        public int Box { get; }
 
         public int Value { get; }
 

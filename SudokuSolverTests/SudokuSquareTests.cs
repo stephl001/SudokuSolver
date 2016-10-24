@@ -42,18 +42,31 @@ namespace SudokuSolverTests
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void TestInvalidRangeCreationValue()
         {
-            new SudokuSquare(3, 5, 9);
+            new SudokuSquare(3, 5, 10);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentOutOfRangeException))]
+        public void TestInvalidRangeCreationNegativeValue()
+        {
+            new SudokuSquare(3, 5, -1);
         }
 
         [TestMethod]
         public void TestValidCreationValue()
         {
-            var s = new SudokuSquare(3, 5, 4);
-            Assert.IsTrue(s.IsValueSet);
-            Assert.AreEqual(4, s.Value);
-            Assert.IsTrue(s.Candidates.Count == 0);
-            Assert.AreEqual(3, s.X);
-            Assert.AreEqual(5, s.Y);
+            var s = new SudokuSquare(3, 5, 0);
+            Assert.IsFalse(s.IsValueSet);
+
+            for (int val = 1; val <= 9; val++)
+            {
+                s = new SudokuSquare(3, 5, val);
+                Assert.IsTrue(s.IsValueSet);
+                Assert.AreEqual(val, s.Value);
+                Assert.IsTrue(s.Candidates.Count == 0);
+                Assert.AreEqual(3, s.X);
+                Assert.AreEqual(5, s.Y);
+            }
         }
 
         [TestMethod]
@@ -301,6 +314,30 @@ namespace SudokuSolverTests
             var s3 = new SudokuSquare(3, 4, new int[] { 2, 5, 8, 9 });
             Assert.IsFalse(s3.IsEmpty);
             Assert.IsTrue(s3.KeepCandidates(1).IsEmpty);
+        }
+
+        [TestMethod]
+        public void TestValidBoxIndex()
+        {
+            int[,] expectedBoxIndexes = new int[,] {
+                { 0, 0, 0, 1, 1, 1, 2, 2, 2 },
+                { 0, 0, 0, 1, 1, 1, 2, 2, 2 },
+                { 0, 0, 0, 1, 1, 1, 2, 2, 2 },
+                { 3, 3, 3, 4, 4, 4, 5, 5, 5 },
+                { 3, 3, 3, 4, 4, 4, 5, 5, 5 },
+                { 3, 3, 3, 4, 4, 4, 5, 5, 5 },
+                { 6, 6, 6, 7, 7, 7, 8, 8, 8 },
+                { 6, 6, 6, 7, 7, 7, 8, 8, 8 },
+                { 6, 6, 6, 7, 7, 7, 8, 8, 8 } };
+
+            for (int x=0; x<9; x++)
+            {
+                for (int y=0; y<9; y++)
+                {
+                    var s = new SudokuSquare(x, y, 0);
+                    Assert.AreEqual(expectedBoxIndexes[x, y], s.Box);
+                }
+            }
         }
     }
 }
