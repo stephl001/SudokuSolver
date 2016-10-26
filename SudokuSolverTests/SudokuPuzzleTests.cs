@@ -13,7 +13,7 @@ namespace SudokuSolverTests
         private SudokuPuzzle _easyPuzzle;
         private SudokuPuzzle _easyPuzzleSolution;
         private SudokuPuzzle _hardPuzzle;
-        //private SudokuPuzzle _hardPuzzleSolution;
+        private SudokuPuzzle _hardPuzzleSolution;
 
         [TestInitialize]
         public void Setup()
@@ -21,10 +21,12 @@ namespace SudokuSolverTests
             var pt = PuzzleTest.Load("easy");
             _easyPuzzle = new SudokuPuzzle(pt.Input);
             _easyPuzzleSolution = new SudokuPuzzle(pt.Solution);
+            _easyPuzzleSolution.ValidationErrors.Should().BeEmpty();
 
             pt = PuzzleTest.Load("hard");
             _hardPuzzle = new SudokuPuzzle(pt.Input);
-            //_hardPuzzleSolution = new SudokuPuzzle(pt.Solution);
+            _hardPuzzleSolution = new SudokuPuzzle(pt.Solution);
+            _hardPuzzleSolution.ValidationErrors.Should().BeEmpty();
         }
 
         [TestMethod]
