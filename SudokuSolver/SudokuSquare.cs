@@ -14,36 +14,36 @@ namespace SudokuSolver
         
         private readonly int _hash;
 
-        public SudokuSquare(int x, int y, int value)
-            : this(x, y, value, EmptyCandidates)
+        public SudokuSquare(int row, int column, int value)
+            : this(row, column, value, EmptyCandidates)
         {            
         }
 
-        public SudokuSquare(int x, int y, int[] candidates)
-            : this(x, y, 0, candidates)
+        public SudokuSquare(int row, int column, int[] candidates)
+            : this(row, column, 0, candidates)
         {
         }
 
-        private SudokuSquare(int x, int y, int value, int[] candidates)
+        private SudokuSquare(int row, int column, int value, int[] candidates)
         {
-            if (x < 0 || x >= MaxRange)
-                throw new ArgumentOutOfRangeException($"{nameof(x)} must be greater or equal than 0 and lower than {MaxRange}.");
-            if (y < 0 || y >= MaxRange)
-                throw new ArgumentOutOfRangeException($"{nameof(y)} must be greater or equal than 0 and lower than {MaxRange}.");
+            if (row < 0 || row >= MaxRange)
+                throw new ArgumentOutOfRangeException(nameof(row), $"{nameof(row)} must be greater or equal than 0 and lower than {MaxRange}.");
+            if (column < 0 || column >= MaxRange)
+                throw new ArgumentOutOfRangeException(nameof(column), $"{nameof(column)} must be greater or equal than 0 and lower than {MaxRange}.");
             if ((value > MaxRange) || (value < 0))
-                throw new ArgumentOutOfRangeException($"{nameof(value)} must be greater or equal than 0 and lower than {MaxRange}.");
+                throw new ArgumentOutOfRangeException(nameof(value), $"{nameof(value)} must be greater or equal than 0 and lower than {MaxRange}.");
             if (candidates == null)
                 throw new ArgumentNullException(nameof(candidates));
             if (candidates.Length > MaxRange)
-                throw new ArgumentOutOfRangeException($"The list of candidates cannot contain more than {MaxRange} elements.");
+                throw new ArgumentOutOfRangeException(nameof(candidates), $"The list of candidates cannot contain more than {MaxRange} elements.");
             if (candidates.Where(c => ((c <= 0) || (c > MaxRange))).Any())
-                throw new ArgumentOutOfRangeException($"A candidate must have a value greater than 0 and smaller or equal than {MaxRange}.");
+                throw new ArgumentOutOfRangeException(nameof(candidates), $"A candidate must have a value greater than 0 and smaller or equal than {MaxRange}.");
             if (candidates.Distinct().Count() != candidates.Length)
-                throw new ArgumentException("A list of candidates cannot duplicate values.");
+                throw new ArgumentException("A list of candidates cannot contain duplicate values.", nameof(candidates));
 
-            X = x;
-            Y = y;
-            Box = ((y / SqrtMaxRange) + ((x / SqrtMaxRange)*SqrtMaxRange));
+            Row = row;
+            Column = column;
+            Box = ((column / SqrtMaxRange) + ((row / SqrtMaxRange)*SqrtMaxRange));
             Value = value;
 
             Array.Sort(candidates);
@@ -57,8 +57,8 @@ namespace SudokuSolver
         private int CalculateHash()
         {
             int hash = 0;
-            hash |= (X << 8);
-            hash |= (Y << 4);
+            hash |= (Row << 8);
+            hash |= (Column << 4);
             hash |= Value;
 
             if (!IsValueSet && Candidates.Any())
@@ -70,9 +70,9 @@ namespace SudokuSolver
             return hash;
         }
 
-        public int X { get; }
+        public int Row { get; }
 
-        public int Y { get; }
+        public int Column { get; }
 
         public int Box { get; }
 
@@ -91,7 +91,7 @@ namespace SudokuSolver
             if (IsValueSet)
                 throw new InvalidOperationException("You cannot clear candidates on a square that has its value set.");
 
-            return new SudokuSquare(X, Y, Candidates.Except(candidatesToExclude).ToArray());
+            return new SudokuSquare(Row, Column, Candidates.Except(candidatesToExclude).ToArray());
         }
 
         public SudokuSquare KeepCandidates(params int[] candidatesToKeep)
@@ -101,7 +101,7 @@ namespace SudokuSolver
             if (IsValueSet)
                 throw new InvalidOperationException("You cannot keep candidates on a square that has its value set.");
 
-            return new SudokuSquare(X, Y, Candidates.Intersect(candidatesToKeep).ToArray());
+            return new SudokuSquare(Row, Column, Candidates.Intersect(candidatesToKeep).ToArray());
         }
 
         public override bool Equals(object obj)
@@ -116,7 +116,7 @@ namespace SudokuSolver
 
         public override string ToString()
         {
-            return $"Position: ({X}, {Y}), Value: {Value}, Candidates: {{{string.Join(", ", Candidates.Select(c => c.ToString()))}}}";
+            return $"Position: ({Row}, {Column}), Value: {Value}, Candidates: {{{string.Join(", ", Candidates.Select(c => c.ToString()))}}}";
         }
 
         public bool Equals(SudokuSquare other)
@@ -124,7 +124,7 @@ namespace SudokuSolver
             if (other == null)
                 return false;
 
-            if ((X != other.X) || (Y != other.Y))
+            if ((Row != other.Row) || (Column != other.Column))
                 return false;
 
             if (IsValueSet != other.IsValueSet)

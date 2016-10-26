@@ -71,11 +71,11 @@ namespace SudokuSolver
 
         private void FillSquares(int[,] input)
         {
-            for (int x = 0; x < MaxRange; x++)
+            for (int row = 0; row < MaxRange; row++)
             {
-                for (int y = 0; y < MaxRange; y++)
+                for (int column = 0; column < MaxRange; column++)
                 {
-                    _squares[x, y] = new SudokuSquare(x, y, input[x, y]);
+                    _squares[row, column] = new SudokuSquare(row, column, input[row, column]);
                 }
             }
         }
@@ -106,13 +106,21 @@ namespace SudokuSolver
 
         public IEnumerable<SudokuSquare> ReadAllSquares()
         {
-            for (int x=0; x<MaxRange; x++)
+            for (int row=0; row<MaxRange; row++)
             {
-                for (int y=0; y<MaxRange; y++)
+                for (int column=0; column<MaxRange; column++)
                 {
-                    yield return _squares[x, y];
+                    yield return _squares[row, column];
                 }
             }
+        }
+
+        public IEnumerable<SudokuSquare> ReadBuddies(SudokuSquare s)
+        {
+            return ReadRow(s.Row)
+                .Concat(ReadColumn(s.Column))
+                .Concat(ReadBox(s.Box))
+                .Distinct();
         }
 
         public IEnumerable<SudokuSquare> ReadBox(int boxIndex)
@@ -130,6 +138,11 @@ namespace SudokuSolver
         }
 
         public SudokuPuzzle SetSquare(SudokuSquare square)
+        {
+            throw new NotImplementedException();
+        }
+
+        public SudokuPuzzle GetSquare(int row, int column)
         {
             throw new NotImplementedException();
         }
