@@ -12,8 +12,12 @@ namespace SudokuSolver
         private const int MaxRange = 9;
         private const int SqrtMaxRange = 3;
 
-        private readonly SudokuSquare[,] _squares = new SudokuSquare[MaxRange, MaxRange];
+        public const int MinValue = 1;
+        public const int MaxValue = MaxRange;
+        public static ReadOnlyCollection<int> PossibleValues = Array.AsReadOnly(Enumerable.Range(MinValue, MaxRange).ToArray());
 
+        private readonly SudokuSquare[,] _squares = new SudokuSquare[MaxRange, MaxRange];
+        
         public SudokuPuzzle(int[,] input)
         {
             if (input == null)
@@ -24,11 +28,21 @@ namespace SudokuSolver
                 throw new ArgumentOutOfRangeException(nameof(input), "Array must be 9x9");
 
             FillSquares(input);
+            SetupCandidates();
 
             ReadOnlyCollection<SudokuValidationError> validationErrors = GetValidationErrors();
             ValidationErrors = validationErrors;
             IsValid = (validationErrors.Count == 0);
             IsCompleted = IsValid && ReadAllSquares().All(s => s.IsValueSet);
+        }
+
+        private void SetupCandidates()
+        {
+            foreach (SudokuSquare unsetSquare in ReadAllSquares().Where(s => !s.IsValueSet))
+            {
+                IEnumerable<int> candidates = PossibleValues.Except(this.ReadBuddiesValues(unsetSquare));
+                _squares[unsetSquare.Row, unsetSquare.Column] = new SudokuSquare(unsetSquare.Row, unsetSquare.Column, candidates.ToArray());
+            }
         }
 
         private ReadOnlyCollection<SudokuValidationError> GetValidationErrors()
@@ -115,12 +129,16 @@ namespace SudokuSolver
             }
         }
 
-        public IEnumerable<SudokuSquare> ReadBuddies(SudokuSquare s)
+        public IEnumerable<SudokuSquare> ReadBuddies(SudokuSquare square)
         {
-            return ReadRow(s.Row)
-                .Concat(ReadColumn(s.Column))
-                .Concat(ReadBox(s.Box))
-                .Distinct();
+            if (square == null)
+                throw new ArgumentNullException(nameof(square));
+
+            return ReadRow(square.Row)
+                .Concat(ReadColumn(square.Column))
+                .Concat(ReadBox(square.Box))
+                .Distinct()
+                .Except(new[] { square });
         }
 
         public IEnumerable<SudokuSquare> ReadBox(int boxIndex)
@@ -142,9 +160,14 @@ namespace SudokuSolver
             throw new NotImplementedException();
         }
 
-        public SudokuPuzzle GetSquare(int row, int column)
+        public SudokuSquare GetSquare(int row, int column)
         {
-            throw new NotImplementedException();
+            if (row < 0 || row >= MaxRange)
+                throw new ArgumentOutOfRangeException("row");
+            if (column < 0 || column >= MaxRange)
+                throw new ArgumentOutOfRangeException("column");
+
+            return _squares[row, column];
         }
 
         public int Width { get { return MaxRange; } }

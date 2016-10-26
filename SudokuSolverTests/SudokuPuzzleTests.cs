@@ -3,8 +3,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SudokuSolver;
 using System.Linq;
 using System.Collections.Generic;
-using System.Reflection;
-using System.IO;
 using FluentAssertions;
 
 namespace SudokuSolverTests
@@ -12,6 +10,23 @@ namespace SudokuSolverTests
     [TestClass]
     public class SudokuPuzzleTests
     {
+        private SudokuPuzzle _easyPuzzle;
+        private SudokuPuzzle _easyPuzzleSolution;
+        private SudokuPuzzle _hardPuzzle;
+        //private SudokuPuzzle _hardPuzzleSolution;
+
+        [TestInitialize]
+        public void Setup()
+        {
+            var pt = PuzzleTest.Load("easy");
+            _easyPuzzle = new SudokuPuzzle(pt.Input);
+            _easyPuzzleSolution = new SudokuPuzzle(pt.Solution);
+
+            pt = PuzzleTest.Load("hard");
+            _hardPuzzle = new SudokuPuzzle(pt.Input);
+            //_hardPuzzleSolution = new SudokuPuzzle(pt.Solution);
+        }
+
         [TestMethod]
         public void TestInvalidCreation()
         {
@@ -81,88 +96,98 @@ namespace SudokuSolverTests
         [TestMethod]
         public void TestValidInput()
         {
-            var pt = PuzzleTest.Load("easy");
-            var puzzle = new SudokuPuzzle(pt.Input);
-            puzzle.IsValid.Should().BeTrue();
-            puzzle.Height.Should().Be(9);
-            puzzle.Width.Should().Be(9);
+            _easyPuzzle.IsValid.Should().BeTrue();
+            _easyPuzzle.Height.Should().Be(9);
+            _easyPuzzle.Width.Should().Be(9);
         }
 
         [TestMethod]
         public void TestReadOutOfRange()
         {
-            var pt = PuzzleTest.Load("easy");
-            var puzzle = new SudokuPuzzle(pt.Input);
-
-            Action act = () => puzzle.ReadRow(-1).ToArray();
+            Action act = () => _easyPuzzle.ReadRow(-1).ToArray();
             act.ShouldThrow<ArgumentOutOfRangeException>().And.ParamName.Should().Be("rowIndex");
 
-            act = () => puzzle.ReadRow(10).ToArray();
+            act = () => _easyPuzzle.ReadRow(10).ToArray();
             act.ShouldThrow<ArgumentOutOfRangeException>().And.ParamName.Should().Be("rowIndex");
 
-            act = () => puzzle.ReadColumn(-1).ToArray();
+            act = () => _easyPuzzle.ReadColumn(-1).ToArray();
             act.ShouldThrow<ArgumentOutOfRangeException>().And.ParamName.Should().Be("columnIndex");
 
-            act = () => puzzle.ReadColumn(10).ToArray();
+            act = () => _easyPuzzle.ReadColumn(10).ToArray();
             act.ShouldThrow<ArgumentOutOfRangeException>().And.ParamName.Should().Be("columnIndex");
 
-            act = () => puzzle.ReadBox(-1).ToArray();
+            act = () => _easyPuzzle.ReadBox(-1).ToArray();
             act.ShouldThrow<ArgumentOutOfRangeException>().And.ParamName.Should().Be("boxIndex");
 
-            act = () => puzzle.ReadBox(10).ToArray();
+            act = () => _easyPuzzle.ReadBox(10).ToArray();
             act.ShouldThrow<ArgumentOutOfRangeException>().And.ParamName.Should().Be("boxIndex");
         }
 
         [TestMethod]
         public void TestReadRowPuzzle()
         {
-            var pt = PuzzleTest.Load("easy");
-            var puzzle = new SudokuPuzzle(pt.Input);
-            puzzle.ReadRow(0).Select(s => s.Value).ShouldBeEquivalentTo(new int[] { 9, 0, 1, 7, 3, 0, 8, 2, 5 });
-            puzzle.ReadRow(8).Select(s => s.Value).ShouldBeEquivalentTo(new int[] { 0, 4, 0, 6, 5, 8, 1, 3, 2 });
+            _easyPuzzle.ReadRow(0).Select(s => s.Value).ShouldBeEquivalentTo(new int[] { 9, 0, 1, 7, 3, 0, 8, 2, 5 });
+            _easyPuzzle.ReadRow(8).Select(s => s.Value).ShouldBeEquivalentTo(new int[] { 0, 4, 0, 6, 5, 8, 1, 3, 2 });
         }
 
         [TestMethod]
         public void TestReadColumnPuzzle()
         {
-            var pt = PuzzleTest.Load("easy");
-            var puzzle = new SudokuPuzzle(pt.Input);
-            puzzle.ReadColumn(0).Select(s => s.Value).ShouldBeEquivalentTo(new int[] { 9, 5, 2, 8, 4, 6, 0, 1, 0 });
-            puzzle.ReadColumn(8).Select(s => s.Value).ShouldBeEquivalentTo(new int[] { 5, 9, 4, 0, 6, 1, 8, 0, 2 });
+            _easyPuzzle.ReadColumn(0).Select(s => s.Value).ShouldBeEquivalentTo(new int[] { 9, 5, 2, 8, 4, 6, 0, 1, 0 });
+            _easyPuzzle.ReadColumn(8).Select(s => s.Value).ShouldBeEquivalentTo(new int[] { 5, 9, 4, 0, 6, 1, 8, 0, 2 });
         }
 
         [TestMethod]
         public void TestReadBoxPuzzle()
         {
-            var pt = PuzzleTest.Load("easy");
-            var puzzle = new SudokuPuzzle(pt.Input);
-            
-            puzzle.ReadBox(0).Select(s => s.Value).ShouldBeEquivalentTo(new int[] { 9, 0, 1, 5, 3, 4, 2, 7, 0 });
-            puzzle.ReadBox(4).Select(s => s.Value).ShouldBeEquivalentTo(new int[] { 0, 4, 0, 3, 0, 5, 0, 2, 0 });
-            puzzle.ReadBox(8).Select(s => s.Value).ShouldBeEquivalentTo(new int[] { 0, 9, 8, 6, 5, 0, 1, 3, 2 });
+            _easyPuzzle.ReadBox(0).Select(s => s.Value).ShouldBeEquivalentTo(new int[] { 9, 0, 1, 5, 3, 4, 2, 7, 0 });
+            _easyPuzzle.ReadBox(4).Select(s => s.Value).ShouldBeEquivalentTo(new int[] { 0, 4, 0, 3, 0, 5, 0, 2, 0 });
+            _easyPuzzle.ReadBox(8).Select(s => s.Value).ShouldBeEquivalentTo(new int[] { 0, 9, 8, 6, 5, 0, 1, 3, 2 });
         }
         
         [TestMethod]
         public void TestCompletedPuzzle()
         {
-            var pt = PuzzleTest.Load("easy");
-            var puzzleInput = new SudokuPuzzle(pt.Input);
-            var puzzleSolution = new SudokuPuzzle(pt.Solution);
-            puzzleInput.IsCompleted.Should().BeFalse();
-            puzzleSolution.IsCompleted.Should().BeTrue();
+            _easyPuzzle.IsCompleted.Should().BeFalse();
+            _easyPuzzleSolution.IsCompleted.Should().BeTrue();
         }
-        /*
+
+        [TestMethod]
+        public void TestGetSquarePuzzle()
+        {
+            _easyPuzzle.GetSquare(2, 3).Value.Should().Be(5);
+
+            Action act = () => _easyPuzzle.GetSquare(-1, 2);
+            act.ShouldThrow<ArgumentOutOfRangeException>().And.ParamName.Should().Be("row");
+            act = () => _easyPuzzle.GetSquare(9, 2);
+            act.ShouldThrow<ArgumentOutOfRangeException>().And.ParamName.Should().Be("row");
+            act = () => _easyPuzzle.GetSquare(1, -1);
+            act.ShouldThrow<ArgumentOutOfRangeException>().And.ParamName.Should().Be("column");
+            act = () => _easyPuzzle.GetSquare(1, 9);
+            act.ShouldThrow<ArgumentOutOfRangeException>().And.ParamName.Should().Be("column");
+        }
+
+        [TestMethod]
+        public void TestReadBuddies()
+        {
+            Action act = () => _easyPuzzle.ReadBuddies(null);
+            act.ShouldThrow<ArgumentNullException>().And.ParamName.Should().Be("square");
+
+            foreach (SudokuSquare s in _easyPuzzle.ReadAllSquares())
+            {
+                _easyPuzzle.ReadBuddies(s).Should().OnlyHaveUniqueItems().And.HaveCount(20);
+            }
+
+            SudokuSquare square = _easyPuzzle.GetSquare(2, 4);
+            IEnumerable<int> impossibleValues = _easyPuzzle.ReadBuddiesValues(square);
+            SudokuPuzzle.PossibleValues.Except(impossibleValues).Single().Should().Be(6);
+        }
+        
         [TestMethod]
         public void TestCandidatesPuzzle()
         {
-            var pt = PuzzleTest.Load("easy");
-            var puzzleInput = new SudokuPuzzle(pt.Input);
-            SudokuSquare[] unsetSquares = puzzleInput.ReadAllSquares().Where(s => !s.IsValueSet).ToArray();
-            Assert.AreEqual(22, unsetSquares.Length);
-            foreach (SudokuSquare s in unsetSquares)
-            {
-                puzzleInput.Read
-            }
-        }*/
+            _hardPuzzle.GetSquare(4, 4).Candidates.ShouldBeEquivalentTo(new int[] { 1, 4, 6, 8, 9 });
+            _hardPuzzle.GetSquare(6, 2).Candidates.ShouldBeEquivalentTo(new int[] { 1, 3, 4, 6, 7, 9 });
+        }
     }
 }
