@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace SudokuSolver
@@ -6,79 +7,131 @@ namespace SudokuSolver
     public sealed class SudokuSquare : IEquatable<SudokuSquare>
     {
         private const int MaxRange = 9;
+        private const int SqrtMaxRange = 3;
         private static readonly int[] EmptyCandidates = new int[] {};
+        
+        private readonly int _hash;
 
-        public SudokuSquare(int x, int y, int value)
-            : this(x, y, value, EmptyCandidates)
+        public SudokuSquare(int row, int column, int value)
+            : this(row, column, value, EmptyCandidates)
         {            
         }
 
-        public SudokuSquare(int x, int y, int[] candidates)
-            : this(x, y, 0, candidates)
+        public SudokuSquare(int row, int column, int[] candidates)
+            : this(row, column, 0, candidates)
         {
         }
 
-        private SudokuSquare(int x, int y, int value, int[] candidates)
+        private SudokuSquare(int row, int column, int value, int[] candidates)
         {
-            if (x < 0 || x >= MaxRange)
-                throw new ArgumentOutOfRangeException($"{nameof(x)} must be greater or equal than 0 and lower than {MaxRange}.");
-            if (y < 0 || y >= MaxRange)
-                throw new ArgumentOutOfRangeException($"{nameof(y)} must be greater or equal than 0 and lower than {MaxRange}.");
-            if (value >= MaxRange)
-                throw new ArgumentOutOfRangeException($"{nameof(value)} must be greater or equal than 0 and lower than {MaxRange}.");
+            if (row < 0 || row >= MaxRange)
+                throw new ArgumentOutOfRangeException(nameof(row), $"{nameof(row)} must be greater or equal than 0 and lower than {MaxRange}.");
+            if (column < 0 || column >= MaxRange)
+                throw new ArgumentOutOfRangeException(nameof(column), $"{nameof(column)} must be greater or equal than 0 and lower than {MaxRange}.");
+            if ((value > MaxRange) || (value < 0))
+                throw new ArgumentOutOfRangeException(nameof(value), $"{nameof(value)} must be greater or equal than 0 and lower than {MaxRange}.");
             if (candidates == null)
                 throw new ArgumentNullException(nameof(candidates));
             if (candidates.Length > MaxRange)
-                throw new ArgumentOutOfRangeException($"The list of candidates cannot contain more than {MaxRange} elements.");
+                throw new ArgumentOutOfRangeException(nameof(candidates), $"The list of candidates cannot contain more than {MaxRange} elements.");
             if (candidates.Where(c => ((c <= 0) || (c > MaxRange))).Any())
-                throw new ArgumentOutOfRangeException($"A candidate must have a value greater than 0 and smaller or equal than {MaxRange}.");
+                throw new ArgumentOutOfRangeException(nameof(candidates), $"A candidate must have a value greater than 0 and smaller or equal than {MaxRange}.");
             if (candidates.Distinct().Count() != candidates.Length)
-                throw new ArgumentException("A list of candidates cannot duplicate values.");
+                throw new ArgumentException("A list of candidates cannot contain duplicate values.", nameof(candidates));
 
-            X = x;
-            Y = y;
+            Row = row;
+            Column = column;
+            Box = ((column / SqrtMaxRange) + ((row / SqrtMaxRange)*SqrtMaxRange));
             Value = value;
-            Candidates = candidates;
+
+            Array.Sort(candidates);
+            Candidates = Array.AsReadOnly(candidates);
+
+            _hash = CalculateHash();
+
+            IsEmpty = ((value == 0) && !candidates.Any());
         }
 
-        public int X { get; }
+        private int CalculateHash()
+        {
+            int hash = 0;
+            hash |= (Row << 8);
+            hash |= (Column << 4);
+            hash |= Value;
 
-        public int Y { get; }
+            if (!IsValueSet && Candidates.Any())
+            {
+                int partialHash = Candidates.Aggregate(0, (bits, c) => bits |= (1 << (c-1)));
+                hash |= (partialHash << 16);
+            }
+
+            return hash;
+        }
+
+        public int Row { get; }
+
+        public int Column { get; }
+
+        public int Box { get; }
 
         public int Value { get; }
 
         public bool IsValueSet { get { return Value > 0; } }
 
-        public int[] Candidates { get; }
+        public bool IsEmpty { get; }
 
-        public SudokuSquare ClearCandidates(int[] candidates)
+        public ReadOnlyCollection<int> Candidates { get; }
+
+        public SudokuSquare ClearCandidates(params int[] candidatesToExclude)
         {
-            throw new NotImplementedException();
+            candidatesToExclude = candidatesToExclude ?? new int[] { };
+
+            if (IsValueSet)
+                throw new InvalidOperationException("You cannot clear candidates on a square that has its value set.");
+
+            return new SudokuSquare(Row, Column, Candidates.Except(candidatesToExclude).ToArray());
         }
 
-        public SudokuSquare KeepCandidates(int[] candidates)
+        public SudokuSquare KeepCandidates(params int[] candidatesToKeep)
         {
-            throw new NotImplementedException();
+            candidatesToKeep = candidatesToKeep ?? Enumerable.Range(1, MaxRange).ToArray();
+
+            if (IsValueSet)
+                throw new InvalidOperationException("You cannot keep candidates on a square that has its value set.");
+
+            return new SudokuSquare(Row, Column, Candidates.Intersect(candidatesToKeep).ToArray());
         }
 
         public override bool Equals(object obj)
         {
-            return base.Equals(obj);
+            return Equals(obj as SudokuSquare);
         }
 
         public override int GetHashCode()
         {
-            return base.GetHashCode();
+            return _hash;
         }
 
         public override string ToString()
         {
-            return $"Position: ({X}, {Y}), Value: {Value}, Candidates: {{{string.Join(", ", Candidates.Select(c => c.ToString()))}}}";
+            return $"Position: ({Row}, {Column}), Value: {Value}, Candidates: {{{string.Join(", ", Candidates.Select(c => c.ToString()))}}}";
         }
 
         public bool Equals(SudokuSquare other)
         {
-            throw new NotImplementedException();
+            if (other == null)
+                return false;
+
+            if ((Row != other.Row) || (Column != other.Column))
+                return false;
+
+            if (IsValueSet != other.IsValueSet)
+                return false;
+
+            if (IsValueSet)
+                return (Value == other.Value);
+
+            return Candidates.SequenceEqual(other.Candidates);
         }
     }
 }
