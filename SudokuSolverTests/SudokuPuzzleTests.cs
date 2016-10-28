@@ -10,13 +10,13 @@ namespace SudokuSolverTests
     [TestClass]
     public class SudokuPuzzleTests
     {
-        private SudokuPuzzle _easyPuzzle;
-        private SudokuPuzzle _easyPuzzleSolution;
-        private SudokuPuzzle _hardPuzzle;
-        private SudokuPuzzle _hardPuzzleSolution;
+        private static SudokuPuzzle _easyPuzzle;
+        private static SudokuPuzzle _easyPuzzleSolution;
+        private static SudokuPuzzle _hardPuzzle;
+        private static SudokuPuzzle _hardPuzzleSolution;
 
-        [TestInitialize]
-        public void Setup()
+        [AssemblyInitialize]
+        public static void Setup(TestContext context)
         {
             var pt = PuzzleTest.Load("easy");
             _easyPuzzle = new SudokuPuzzle(pt.Input);
@@ -190,6 +190,50 @@ namespace SudokuSolverTests
         {
             _hardPuzzle.GetSquare(4, 4).Candidates.ShouldBeEquivalentTo(new int[] { 1, 4, 6, 8, 9 });
             _hardPuzzle.GetSquare(6, 2).Candidates.ShouldBeEquivalentTo(new int[] { 1, 3, 4, 6, 7, 9 });
+        }
+
+        [TestMethod]
+        public void TestSetValuePuzzle()
+        {
+            Action act = () => _hardPuzzle.SetValue(null);
+            act.ShouldThrow<ArgumentNullException>().And.ParamName.Should().Be("square");
+
+            //Setting a value with a non-valued square should fail
+            act = () => _hardPuzzle.SetValue(new SudokuSquare(1, 2, new int[] { 1, 2 }));
+            act.ShouldThrow<ArgumentException>().WithMessage("The provided square must have a value set.*Parameter name: square");
+
+            //Setting an already set square should fail if trying to set a different value
+            act = () => _hardPuzzle.SetValue(new SudokuSquare(1, 2, 6));
+            act.ShouldThrow<ArgumentException>().WithMessage("The specified square has alerady a value set(8).*Parameter name: square");
+
+            //Setting an already set square with the exact same value should yield the same puzzle instance
+            SudokuPuzzle newPuzzle = _hardPuzzle.SetValue(new SudokuSquare(1, 2, 8));
+            newPuzzle.Should().Be(_hardPuzzle);
+
+            //Setting a new valid value should yield a new puzzle instance with updated 
+            //candidates
+            SudokuSquare newSquare = new SudokuSquare(4, 4, 1);
+            newPuzzle = _hardPuzzle.SetValue(newSquare);
+            newPuzzle.Should().NotBe(_hardPuzzle);
+            newPuzzle.IsValid.Should().BeTrue();
+            newPuzzle.GetSquare(4, 4).Should().Be(newSquare);
+            newPuzzle.ReadBuddiesCandidates(newSquare).Should().NotContain(1);
+
+            //Setting a new invalid value should yield a new puzzle instance 
+            newSquare = new SudokuSquare(4, 4, 3);
+            newPuzzle = _hardPuzzle.SetValue(newSquare);
+            newPuzzle.Should().NotBe(_hardPuzzle);
+            newPuzzle.IsValid.Should().BeFalse();
+            newPuzzle.ValidationErrors.Should().HaveCount(1);
+            newPuzzle.ValidationErrors.Single().Should().BeOfType(typeof(SudokuBoxValidationError));
+
+            //Setting a value on an invalid puzzle should raise an exception
+            act = () => newPuzzle.SetValue(newSquare);
+            act.ShouldThrow<InvalidOperationException>().WithMessage("You cannot modify an invalid or completed puzzle.");
+
+            //Setting a value on a completed puzzle should raise an exception
+            act = () => _hardPuzzleSolution.SetValue(newSquare);
+            act.ShouldThrow<InvalidOperationException>().WithMessage("You cannot modify an invalid or completed puzzle.");
         }
     }
 }

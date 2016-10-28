@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SudokuSolver
 {
@@ -19,6 +17,11 @@ namespace SudokuSolver
         private readonly SudokuSquare[,] _squares = new SudokuSquare[MaxRange, MaxRange];
         
         public SudokuPuzzle(int[,] input)
+            : this(ConvertToSquares(input))
+        {            
+        }
+
+        private static SudokuSquare[,] ConvertToSquares(int[,] input)
         {
             if (input == null)
                 throw new ArgumentNullException(nameof(input));
@@ -27,7 +30,22 @@ namespace SudokuSolver
             if (input.GetUpperBound(1) != (MaxRange - 1))
                 throw new ArgumentOutOfRangeException(nameof(input), "Array must be 9x9");
 
-            FillSquares(input);
+            var squares = new SudokuSquare[MaxRange, MaxRange];
+            for (int row = 0; row < MaxRange; row++)
+            {
+                for (int column = 0; column < MaxRange; column++)
+                {
+                    squares[row, column] = new SudokuSquare(row, column, input[row, column]);
+                }
+            }
+
+            return squares;
+        }
+
+        private SudokuPuzzle(SudokuSquare[,] input)
+        {
+            _squares = (SudokuSquare[,])input.Clone();
+            
             SetupCandidates();
 
             ReadOnlyCollection<SudokuValidationError> validationErrors = GetValidationErrors();
@@ -38,10 +56,27 @@ namespace SudokuSolver
 
         private void SetupCandidates()
         {
-            foreach (SudokuSquare unsetSquare in ReadAllSquares().Where(s => !s.IsValueSet))
+            InitializeEmptySquareCandidates();
+            RemoveImpossibleCandidates();
+        }
+
+        private void InitializeEmptySquareCandidates()
+        {
+            foreach (SudokuSquare unsetSquare in ReadAllSquares().Where(s => s.IsEmpty))
             {
                 IEnumerable<int> candidates = PossibleValues.Except(this.ReadBuddiesValues(unsetSquare));
                 _squares[unsetSquare.Row, unsetSquare.Column] = new SudokuSquare(unsetSquare.Row, unsetSquare.Column, candidates.ToArray());
+            }
+        }
+
+        private void RemoveImpossibleCandidates()
+        {
+            foreach (SudokuSquare setSquare in ReadAllSquares().Where(s => s.IsValueSet))
+            {
+                foreach (SudokuSquare newBuddy in this.ReadBuddiesWithoutValue(setSquare).Select(s => s.ClearCandidates(setSquare.Value)))
+                {
+                    _squares[newBuddy.Row, newBuddy.Column] = newBuddy;
+                }
             }
         }
 
@@ -81,17 +116,6 @@ namespace SudokuSolver
                                 .Select(errorCreationHandler));
                 return list;
             });
-        }
-
-        private void FillSquares(int[,] input)
-        {
-            for (int row = 0; row < MaxRange; row++)
-            {
-                for (int column = 0; column < MaxRange; column++)
-                {
-                    _squares[row, column] = new SudokuSquare(row, column, input[row, column]);
-                }
-            }
         }
 
         public IEnumerable<SudokuValidationError> ValidationErrors { get; }
@@ -155,11 +179,6 @@ namespace SudokuSolver
             }
         }
 
-        public SudokuPuzzle SetSquare(SudokuSquare square)
-        {
-            throw new NotImplementedException();
-        }
-
         public SudokuSquare GetSquare(int row, int column)
         {
             if (row < 0 || row >= MaxRange)
@@ -177,5 +196,28 @@ namespace SudokuSolver
         public bool IsCompleted { get; }
 
         public bool IsValid { get; }
+
+        public SudokuPuzzle SetValue(SudokuSquare square)
+        {
+            if (square == null)
+                throw new ArgumentNullException(nameof(square));
+            if (!square.IsValueSet)
+                throw new ArgumentException("The provided square must have a value set.", nameof(square));
+            if (!IsValid || IsCompleted)
+                throw new InvalidOperationException("You cannot modify an invalid or completed puzzle.");
+
+            SudokuSquare targetSquare = GetSquare(square.Row, square.Column);
+            if (targetSquare.IsValueSet)
+            {
+                if (targetSquare.Value != square.Value)
+                    throw new ArgumentException($"The specified square has alerady a value set({targetSquare.Value}).", nameof(square));
+
+                return this;
+            }
+
+            SudokuSquare[,] squares = (SudokuSquare[,])_squares.Clone();
+            squares[square.Row, square.Column] = square;
+            return new SudokuPuzzle(squares);
+        }
     }
 }
