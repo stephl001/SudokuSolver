@@ -246,5 +246,69 @@ namespace SudokuSolverTests
             act = () => _hardPuzzleSolution.SetValue(newSquare);
             act.ShouldThrow<InvalidOperationException>().WithMessage("You cannot modify an invalid or completed puzzle.");
         }
+
+        [TestMethod]
+        public void TestClearCandidatesInvalidInput()
+        {
+            Action act = () => _hardPuzzle.ClearCandidates(null);
+            act.ShouldThrow<ArgumentNullException>().And.ParamName.Should().Be("squares");
+        }
+
+        [TestMethod]
+        public void TestClearCandidatesWithoutCandidatesShouldYieldSamePuzzle()
+        {
+            SudokuPuzzle newPuzzle = _hardPuzzle.ClearCandidates(new SudokuSquare[] { _hardPuzzle.GetSquare(0, 1) });
+            newPuzzle.Should().Be(_hardPuzzle);
+
+            newPuzzle = _hardPuzzle.ClearCandidates(new SudokuSquare[] { _hardPuzzle.GetSquare(0, 1) }, null);
+            newPuzzle.Should().Be(_hardPuzzle);
+        }
+
+        [TestMethod]
+        public void TestClearCandidatesOnValueCellShouldYieldSamePuzzle()
+        {
+            SudokuPuzzle newPuzzle = _hardPuzzle.ClearCandidates(new SudokuSquare[] { _hardPuzzle.GetSquare(0, 0) }, 1, 2, 3, 4, 5, 6, 7, 8, 9);
+            newPuzzle.Should().Be(_hardPuzzle);
+        }
+
+        [TestMethod]
+        public void TestClearCandidatesOutOfRange()
+        {
+            Action act = () => _hardPuzzle.ClearCandidates(new SudokuSquare[] { _hardPuzzle.GetSquare(0, 1) }, 1, 2, 0);
+            act.ShouldThrow<ArgumentOutOfRangeException>().WithMessage("Valid candidates must range between 1 and 9.*Parameter name: candidates");
+
+            act = () => _hardPuzzle.ClearCandidates(new SudokuSquare[] { _hardPuzzle.GetSquare(0, 1) }, 1, 2, 10);
+            act.ShouldThrow<ArgumentOutOfRangeException>().WithMessage("Valid candidates must range between 1 and 9.*Parameter name: candidates");
+        }
+
+        [TestMethod]
+        public void TestClearRowCandidates()
+        {
+            _hardPuzzle.ReadRow(0).Where(s => s.Candidates.Contains(2)).Should().HaveCount(4);
+            SudokuPuzzle newPuzzle = _hardPuzzle.ClearCandidates(_hardPuzzle.ReadRow(0), 2);
+            newPuzzle.Should().NotBe(_hardPuzzle);
+            newPuzzle.IsValid.Should().BeTrue();
+            newPuzzle.ReadRow(0).Where(s => s.Candidates.Contains(2)).Should().BeEmpty();
+        }
+
+        [TestMethod]
+        public void TestClearColumnCandidates()
+        {
+            _hardPuzzle.ReadColumn(0).Where(s => s.Candidates.Contains(3)).Should().HaveCount(4);
+            SudokuPuzzle newPuzzle = _hardPuzzle.ClearCandidates(_hardPuzzle.ReadColumn(0), 3);
+            newPuzzle.Should().NotBe(_hardPuzzle);
+            newPuzzle.IsValid.Should().BeTrue();
+            newPuzzle.ReadColumn(0).Where(s => s.Candidates.Contains(3)).Should().BeEmpty();
+        }
+
+        [TestMethod]
+        public void TestClearBoxCandidates()
+        {
+            _hardPuzzle.ReadBox(0).Where(s => s.Candidates.Contains(7)).Should().HaveCount(6);
+            SudokuPuzzle newPuzzle = _hardPuzzle.ClearCandidates(_hardPuzzle.ReadBox(0), 7);
+            newPuzzle.Should().NotBe(_hardPuzzle);
+            newPuzzle.IsValid.Should().BeTrue();
+            newPuzzle.ReadBox(0).Where(s => s.Candidates.Contains(7)).Should().BeEmpty();
+        }
     }
 }

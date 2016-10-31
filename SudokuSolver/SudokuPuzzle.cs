@@ -215,9 +215,39 @@ namespace SudokuSolver
                 return this;
             }
 
-            SudokuSquare[,] squares = (SudokuSquare[,])_squares.Clone();
-            squares[square.Row, square.Column] = square;
+            SudokuSquare[,] squares = ReplaceSquares(square);
             return new SudokuPuzzle(squares);
+        }
+
+        public SudokuPuzzle ClearCandidates(IEnumerable<SudokuSquare> squares, params int[] candidates)
+        {
+            if (squares == null)
+                throw new ArgumentNullException(nameof(squares));
+            if ((candidates == null) || (candidates.Length == 0))
+                return this;
+
+            SudokuSquare[] localSquares = squares.Where(s => !s.IsValueSet).Distinct().ToArray();
+            if (localSquares.Length == 0)
+                return this;
+
+            if (candidates.Any(c => (c < 1) || (c > MaxRange)))
+                throw new ArgumentOutOfRangeException(nameof(candidates), "Valid candidates must range between 1 and 9.");
+
+            IEnumerable<SudokuSquare> newSquares = localSquares.Select(s => s.ClearCandidates(candidates));
+            SudokuSquare[,] newArraySquares = ReplaceSquares(newSquares.ToArray());
+
+            return new SudokuPuzzle(newArraySquares);
+        }
+
+        private SudokuSquare[,] ReplaceSquares(params SudokuSquare[] squares)
+        {
+            SudokuSquare[,] tmp = (SudokuSquare[,])_squares.Clone();
+            foreach (SudokuSquare s in squares)
+            {
+                tmp[s.Row, s.Column] = s;
+            }
+
+            return tmp;
         }
     }
 }
