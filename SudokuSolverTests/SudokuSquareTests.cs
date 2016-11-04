@@ -9,7 +9,7 @@ using FluentAssertions;
 namespace SudokuSolverTests
 {
     [TestClass]
-    public class SudokuSquareTests
+    public class SudokuSquareTests : SudokuTests
     {
         [TestMethod]
         public void TestInvalidCreation()

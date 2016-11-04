@@ -7,7 +7,7 @@ using System.Linq;
 namespace SudokuSolverTests
 {
     [TestClass]
-    public class SudokuStrategyResultTests
+    public class SudokuStrategyResultTests : SudokuTests
     {
         [TestMethod]
         public void TestNotFound()

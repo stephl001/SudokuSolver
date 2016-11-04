@@ -8,27 +8,8 @@ using FluentAssertions;
 namespace SudokuSolverTests
 {
     [TestClass]
-    public class SudokuPuzzleTests
+    public class SudokuPuzzleTests : SudokuTests
     {
-        private static SudokuPuzzle _easyPuzzle;
-        private static SudokuPuzzle _easyPuzzleSolution;
-        private static SudokuPuzzle _hardPuzzle;
-        private static SudokuPuzzle _hardPuzzleSolution;
-
-        [AssemblyInitialize]
-        public static void Setup(TestContext context)
-        {
-            var pt = PuzzleTest.Load("easy");
-            _easyPuzzle = new SudokuPuzzle(pt.Input);
-            _easyPuzzleSolution = new SudokuPuzzle(pt.Solution);
-            _easyPuzzleSolution.ValidationErrors.Should().BeEmpty();
-
-            pt = PuzzleTest.Load("hard");
-            _hardPuzzle = new SudokuPuzzle(pt.Input);
-            _hardPuzzleSolution = new SudokuPuzzle(pt.Solution);
-            _hardPuzzleSolution.ValidationErrors.Should().BeEmpty();
-        }
-
         [TestMethod]
         public void TestInvalidCreation()
         {
@@ -98,112 +79,112 @@ namespace SudokuSolverTests
         [TestMethod]
         public void TestValidInput()
         {
-            _easyPuzzle.IsValid.Should().BeTrue();
-            _easyPuzzle.Height.Should().Be(9);
-            _easyPuzzle.Width.Should().Be(9);
+            EasyPuzzle.IsValid.Should().BeTrue();
+            EasyPuzzle.Height.Should().Be(9);
+            EasyPuzzle.Width.Should().Be(9);
         }
 
         [TestMethod]
         public void TestReadOutOfRange()
         {
-            Action act = () => _easyPuzzle.ReadRow(-1).ToArray();
+            Action act = () => EasyPuzzle.ReadRow(-1).ToArray();
             act.ShouldThrow<ArgumentOutOfRangeException>().And.ParamName.Should().Be("rowIndex");
 
-            act = () => _easyPuzzle.ReadRow(10).ToArray();
+            act = () => EasyPuzzle.ReadRow(10).ToArray();
             act.ShouldThrow<ArgumentOutOfRangeException>().And.ParamName.Should().Be("rowIndex");
 
-            act = () => _easyPuzzle.ReadColumn(-1).ToArray();
+            act = () => EasyPuzzle.ReadColumn(-1).ToArray();
             act.ShouldThrow<ArgumentOutOfRangeException>().And.ParamName.Should().Be("columnIndex");
 
-            act = () => _easyPuzzle.ReadColumn(10).ToArray();
+            act = () => EasyPuzzle.ReadColumn(10).ToArray();
             act.ShouldThrow<ArgumentOutOfRangeException>().And.ParamName.Should().Be("columnIndex");
 
-            act = () => _easyPuzzle.ReadBox(-1).ToArray();
+            act = () => EasyPuzzle.ReadBox(-1).ToArray();
             act.ShouldThrow<ArgumentOutOfRangeException>().And.ParamName.Should().Be("boxIndex");
 
-            act = () => _easyPuzzle.ReadBox(10).ToArray();
+            act = () => EasyPuzzle.ReadBox(10).ToArray();
             act.ShouldThrow<ArgumentOutOfRangeException>().And.ParamName.Should().Be("boxIndex");
         }
 
         [TestMethod]
         public void TestReadRowPuzzle()
         {
-            _easyPuzzle.ReadRow(0).Select(s => s.Value).ShouldBeEquivalentTo(new int[] { 9, 0, 1, 7, 3, 0, 8, 2, 5 });
-            _easyPuzzle.ReadRow(8).Select(s => s.Value).ShouldBeEquivalentTo(new int[] { 0, 4, 0, 6, 5, 8, 1, 3, 2 });
+            EasyPuzzle.ReadRow(0).Select(s => s.Value).ShouldBeEquivalentTo(new int[] { 9, 0, 1, 7, 3, 0, 8, 2, 5 });
+            EasyPuzzle.ReadRow(8).Select(s => s.Value).ShouldBeEquivalentTo(new int[] { 0, 4, 0, 6, 5, 8, 1, 3, 2 });
         }
 
         [TestMethod]
         public void TestReadColumnPuzzle()
         {
-            _easyPuzzle.ReadColumn(0).Select(s => s.Value).ShouldBeEquivalentTo(new int[] { 9, 5, 2, 8, 4, 6, 0, 1, 0 });
-            _easyPuzzle.ReadColumn(8).Select(s => s.Value).ShouldBeEquivalentTo(new int[] { 5, 9, 4, 0, 6, 1, 8, 0, 2 });
+            EasyPuzzle.ReadColumn(0).Select(s => s.Value).ShouldBeEquivalentTo(new int[] { 9, 5, 2, 8, 4, 6, 0, 1, 0 });
+            EasyPuzzle.ReadColumn(8).Select(s => s.Value).ShouldBeEquivalentTo(new int[] { 5, 9, 4, 0, 6, 1, 8, 0, 2 });
         }
 
         [TestMethod]
         public void TestReadBoxPuzzle()
         {
-            _easyPuzzle.ReadBox(0).Select(s => s.Value).ShouldBeEquivalentTo(new int[] { 9, 0, 1, 5, 3, 4, 2, 7, 0 });
-            _easyPuzzle.ReadBox(4).Select(s => s.Value).ShouldBeEquivalentTo(new int[] { 0, 4, 0, 3, 0, 5, 0, 2, 0 });
-            _easyPuzzle.ReadBox(8).Select(s => s.Value).ShouldBeEquivalentTo(new int[] { 0, 9, 8, 6, 5, 0, 1, 3, 2 });
+            EasyPuzzle.ReadBox(0).Select(s => s.Value).ShouldBeEquivalentTo(new int[] { 9, 0, 1, 5, 3, 4, 2, 7, 0 });
+            EasyPuzzle.ReadBox(4).Select(s => s.Value).ShouldBeEquivalentTo(new int[] { 0, 4, 0, 3, 0, 5, 0, 2, 0 });
+            EasyPuzzle.ReadBox(8).Select(s => s.Value).ShouldBeEquivalentTo(new int[] { 0, 9, 8, 6, 5, 0, 1, 3, 2 });
         }
         
         [TestMethod]
         public void TestCompletedPuzzle()
         {
-            _easyPuzzle.IsCompleted.Should().BeFalse();
-            _easyPuzzleSolution.IsCompleted.Should().BeTrue();
+            EasyPuzzle.IsCompleted.Should().BeFalse();
+            EasyPuzzleSolution.IsCompleted.Should().BeTrue();
         }
 
         [TestMethod]
         public void TestGetSquarePuzzle()
         {
-            _easyPuzzle.GetSquare(2, 3).Value.Should().Be(5);
+            EasyPuzzle.GetSquare(2, 3).Value.Should().Be(5);
 
-            Action act = () => _easyPuzzle.GetSquare(-1, 2);
+            Action act = () => EasyPuzzle.GetSquare(-1, 2);
             act.ShouldThrow<ArgumentOutOfRangeException>().And.ParamName.Should().Be("row");
-            act = () => _easyPuzzle.GetSquare(9, 2);
+            act = () => EasyPuzzle.GetSquare(9, 2);
             act.ShouldThrow<ArgumentOutOfRangeException>().And.ParamName.Should().Be("row");
-            act = () => _easyPuzzle.GetSquare(1, -1);
+            act = () => EasyPuzzle.GetSquare(1, -1);
             act.ShouldThrow<ArgumentOutOfRangeException>().And.ParamName.Should().Be("column");
-            act = () => _easyPuzzle.GetSquare(1, 9);
+            act = () => EasyPuzzle.GetSquare(1, 9);
             act.ShouldThrow<ArgumentOutOfRangeException>().And.ParamName.Should().Be("column");
         }
 
         [TestMethod]
         public void TestReadBuddies()
         {
-            Action act = () => _easyPuzzle.ReadBuddies(null);
+            Action act = () => EasyPuzzle.ReadBuddies(null);
             act.ShouldThrow<ArgumentNullException>().And.ParamName.Should().Be("square");
 
-            foreach (SudokuSquare s in _easyPuzzle.ReadAllSquares())
+            foreach (SudokuSquare s in EasyPuzzle.ReadAllSquares())
             {
-                _easyPuzzle.ReadBuddies(s).Should().OnlyHaveUniqueItems().And.HaveCount(20);
+                EasyPuzzle.ReadBuddies(s).Should().OnlyHaveUniqueItems().And.HaveCount(20);
             }
 
-            SudokuSquare square = _easyPuzzle.GetSquare(2, 4);
-            IEnumerable<int> impossibleValues = _easyPuzzle.ReadBuddiesValues(square);
+            SudokuSquare square = EasyPuzzle.GetSquare(2, 4);
+            IEnumerable<int> impossibleValues = EasyPuzzle.ReadBuddiesValues(square);
             SudokuPuzzle.PossibleValues.Except(impossibleValues).Single().Should().Be(6);
         }
         
         [TestMethod]
         public void TestCandidatesPuzzle()
         {
-            _hardPuzzle.GetSquare(4, 4).Candidates.ShouldBeEquivalentTo(new int[] { 1, 4, 6, 8, 9 });
-            _hardPuzzle.GetSquare(6, 2).Candidates.ShouldBeEquivalentTo(new int[] { 1, 3, 4, 6, 7, 9 });
+            HardPuzzle.GetSquare(4, 4).Candidates.ShouldBeEquivalentTo(new int[] { 1, 4, 6, 8, 9 });
+            HardPuzzle.GetSquare(6, 2).Candidates.ShouldBeEquivalentTo(new int[] { 1, 3, 4, 6, 7, 9 });
         }
 
         [TestMethod]
         public void TestSetValuePuzzleInvalidInput()
         {
-            Action act = () => _hardPuzzle.SetValue(null);
+            Action act = () => HardPuzzle.SetValue(null);
             act.ShouldThrow<ArgumentNullException>().And.ParamName.Should().Be("square");
 
             //Setting a value with a non-valued square should fail
-            act = () => _hardPuzzle.SetValue(new SudokuSquare(1, 2, new int[] { 1, 2 }));
+            act = () => HardPuzzle.SetValue(new SudokuSquare(1, 2, new int[] { 1, 2 }));
             act.ShouldThrow<ArgumentException>().WithMessage("The provided square must have a value set.*Parameter name: square");
 
             //Setting an already set square should fail if trying to set a different value
-            act = () => _hardPuzzle.SetValue(new SudokuSquare(1, 2, 6));
+            act = () => HardPuzzle.SetValue(new SudokuSquare(1, 2, 6));
             act.ShouldThrow<ArgumentException>().WithMessage("The specified square has alerady a value set(8).*Parameter name: square");
         }
 
@@ -211,22 +192,22 @@ namespace SudokuSolverTests
         public void TestSetValuePuzzle()
         {
             //Setting an already set square with the exact same value should yield the same puzzle instance
-            SudokuPuzzle newPuzzle = _hardPuzzle.SetValue(new SudokuSquare(1, 2, 8));
-            newPuzzle.Should().Be(_hardPuzzle);
+            SudokuPuzzle newPuzzle = HardPuzzle.SetValue(new SudokuSquare(1, 2, 8));
+            newPuzzle.Should().Be(HardPuzzle);
 
             //Setting a new valid value should yield a new puzzle instance with updated 
             //candidates
             SudokuSquare newSquare = new SudokuSquare(4, 4, 1);
-            newPuzzle = _hardPuzzle.SetValue(newSquare);
-            newPuzzle.Should().NotBe(_hardPuzzle);
+            newPuzzle = HardPuzzle.SetValue(newSquare);
+            newPuzzle.Should().NotBe(HardPuzzle);
             newPuzzle.IsValid.Should().BeTrue();
             newPuzzle.GetSquare(4, 4).Should().Be(newSquare);
             newPuzzle.ReadBuddiesCandidates(newSquare).Should().NotContain(1);
 
             //Setting a new invalid value should yield a new puzzle instance with validation errors
             newSquare = new SudokuSquare(4, 4, 3);
-            newPuzzle = _hardPuzzle.SetValue(newSquare);
-            newPuzzle.Should().NotBe(_hardPuzzle);
+            newPuzzle = HardPuzzle.SetValue(newSquare);
+            newPuzzle.Should().NotBe(HardPuzzle);
             newPuzzle.IsValid.Should().BeFalse();
             newPuzzle.ValidationErrors.Should().HaveCount(1);
             newPuzzle.ValidationErrors.Single().Should().BeOfType(typeof(SudokuBoxValidationError));
@@ -236,57 +217,57 @@ namespace SudokuSolverTests
         public void TestSetValueOnInvalidOrCompletedPuzzle()
         {
             SudokuSquare newSquare = new SudokuSquare(4, 4, 3);
-            SudokuPuzzle newPuzzle = _hardPuzzle.SetValue(newSquare);
+            SudokuPuzzle newPuzzle = HardPuzzle.SetValue(newSquare);
 
             //Setting a value on an invalid puzzle should raise an exception
             Action act = () => newPuzzle.SetValue(newSquare);
             act.ShouldThrow<InvalidOperationException>().WithMessage("You cannot modify an invalid or completed puzzle.");
 
             //Setting a value on a completed puzzle should raise an exception
-            act = () => _hardPuzzleSolution.SetValue(newSquare);
+            act = () => HardPuzzleSolution.SetValue(newSquare);
             act.ShouldThrow<InvalidOperationException>().WithMessage("You cannot modify an invalid or completed puzzle.");
         }
 
         [TestMethod]
         public void TestClearCandidatesInvalidInput()
         {
-            Action act = () => _hardPuzzle.ClearCandidates(null);
+            Action act = () => HardPuzzle.ClearCandidates(null);
             act.ShouldThrow<ArgumentNullException>().And.ParamName.Should().Be("squares");
         }
 
         [TestMethod]
         public void TestClearCandidatesWithoutCandidatesShouldYieldSamePuzzle()
         {
-            SudokuPuzzle newPuzzle = _hardPuzzle.ClearCandidates(new SudokuSquare[] { _hardPuzzle.GetSquare(0, 1) });
-            newPuzzle.Should().Be(_hardPuzzle);
+            SudokuPuzzle newPuzzle = HardPuzzle.ClearCandidates(new SudokuSquare[] { HardPuzzle.GetSquare(0, 1) });
+            newPuzzle.Should().Be(HardPuzzle);
 
-            newPuzzle = _hardPuzzle.ClearCandidates(new SudokuSquare[] { _hardPuzzle.GetSquare(0, 1) }, null);
-            newPuzzle.Should().Be(_hardPuzzle);
+            newPuzzle = HardPuzzle.ClearCandidates(new SudokuSquare[] { HardPuzzle.GetSquare(0, 1) }, null);
+            newPuzzle.Should().Be(HardPuzzle);
         }
 
         [TestMethod]
         public void TestClearCandidatesOnValueCellShouldYieldSamePuzzle()
         {
-            SudokuPuzzle newPuzzle = _hardPuzzle.ClearCandidates(new SudokuSquare[] { _hardPuzzle.GetSquare(0, 0) }, 1, 2, 3, 4, 5, 6, 7, 8, 9);
-            newPuzzle.Should().Be(_hardPuzzle);
+            SudokuPuzzle newPuzzle = HardPuzzle.ClearCandidates(new SudokuSquare[] { HardPuzzle.GetSquare(0, 0) }, 1, 2, 3, 4, 5, 6, 7, 8, 9);
+            newPuzzle.Should().Be(HardPuzzle);
         }
 
         [TestMethod]
         public void TestClearCandidatesOutOfRange()
         {
-            Action act = () => _hardPuzzle.ClearCandidates(new SudokuSquare[] { _hardPuzzle.GetSquare(0, 1) }, 1, 2, 0);
+            Action act = () => HardPuzzle.ClearCandidates(new SudokuSquare[] { HardPuzzle.GetSquare(0, 1) }, 1, 2, 0);
             act.ShouldThrow<ArgumentOutOfRangeException>().WithMessage("Valid candidates must range between 1 and 9.*Parameter name: candidates");
 
-            act = () => _hardPuzzle.ClearCandidates(new SudokuSquare[] { _hardPuzzle.GetSquare(0, 1) }, 1, 2, 10);
+            act = () => HardPuzzle.ClearCandidates(new SudokuSquare[] { HardPuzzle.GetSquare(0, 1) }, 1, 2, 10);
             act.ShouldThrow<ArgumentOutOfRangeException>().WithMessage("Valid candidates must range between 1 and 9.*Parameter name: candidates");
         }
 
         [TestMethod]
         public void TestClearRowCandidates()
         {
-            _hardPuzzle.ReadRow(0).Where(s => s.Candidates.Contains(2)).Should().HaveCount(4);
-            SudokuPuzzle newPuzzle = _hardPuzzle.ClearCandidates(_hardPuzzle.ReadRow(0), 2);
-            newPuzzle.Should().NotBe(_hardPuzzle);
+            HardPuzzle.ReadRow(0).Where(s => s.Candidates.Contains(2)).Should().HaveCount(4);
+            SudokuPuzzle newPuzzle = HardPuzzle.ClearCandidates(HardPuzzle.ReadRow(0), 2);
+            newPuzzle.Should().NotBe(HardPuzzle);
             newPuzzle.IsValid.Should().BeTrue();
             newPuzzle.ReadRow(0).Where(s => s.Candidates.Contains(2)).Should().BeEmpty();
         }
@@ -294,9 +275,9 @@ namespace SudokuSolverTests
         [TestMethod]
         public void TestClearColumnCandidates()
         {
-            _hardPuzzle.ReadColumn(0).Where(s => s.Candidates.Contains(3)).Should().HaveCount(4);
-            SudokuPuzzle newPuzzle = _hardPuzzle.ClearCandidates(_hardPuzzle.ReadColumn(0), 3);
-            newPuzzle.Should().NotBe(_hardPuzzle);
+            HardPuzzle.ReadColumn(0).Where(s => s.Candidates.Contains(3)).Should().HaveCount(4);
+            SudokuPuzzle newPuzzle = HardPuzzle.ClearCandidates(HardPuzzle.ReadColumn(0), 3);
+            newPuzzle.Should().NotBe(HardPuzzle);
             newPuzzle.IsValid.Should().BeTrue();
             newPuzzle.ReadColumn(0).Where(s => s.Candidates.Contains(3)).Should().BeEmpty();
         }
@@ -304,9 +285,9 @@ namespace SudokuSolverTests
         [TestMethod]
         public void TestClearBoxCandidates()
         {
-            _hardPuzzle.ReadBox(0).Where(s => s.Candidates.Contains(7)).Should().HaveCount(6);
-            SudokuPuzzle newPuzzle = _hardPuzzle.ClearCandidates(_hardPuzzle.ReadBox(0), 7);
-            newPuzzle.Should().NotBe(_hardPuzzle);
+            HardPuzzle.ReadBox(0).Where(s => s.Candidates.Contains(7)).Should().HaveCount(6);
+            SudokuPuzzle newPuzzle = HardPuzzle.ClearCandidates(HardPuzzle.ReadBox(0), 7);
+            newPuzzle.Should().NotBe(HardPuzzle);
             newPuzzle.IsValid.Should().BeTrue();
             newPuzzle.ReadBox(0).Where(s => s.Candidates.Contains(7)).Should().BeEmpty();
         }
