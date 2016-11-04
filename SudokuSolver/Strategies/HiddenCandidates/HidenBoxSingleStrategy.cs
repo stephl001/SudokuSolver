@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace SudokuSolver.Strategies
+namespace SudokuSolver.Strategies.HiddenCandidates
 {
     public sealed class HiddenBoxSingleStrategy : HiddenSingleStrategy
     {

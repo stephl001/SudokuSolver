@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
-namespace SudokuSolver.Strategies
+namespace SudokuSolver.Strategies.HiddenCandidates
 {
     public abstract class HiddenSingleStrategy : SudokuStrategyBase
     {

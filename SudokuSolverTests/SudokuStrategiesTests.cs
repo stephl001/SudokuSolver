@@ -4,6 +4,8 @@ using SudokuSolver.Strategies;
 using FluentAssertions;
 using SudokuSolver;
 using System.Linq;
+using SudokuSolver.Strategies.NakedCandidates;
+using SudokuSolver.Strategies.HiddenCandidates;
 
 namespace SudokuSolverTests
 {

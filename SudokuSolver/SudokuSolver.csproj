@@ -40,12 +40,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Strategies\HidenSingleStrategy.cs" />
-    <Compile Include="Strategies\HidenColumnSingleStrategy.cs" />
-    <Compile Include="Strategies\HidenRowSingleStrategy.cs" />
+    <Compile Include="Strategies\HiddenCandidates\HidenSingleStrategy.cs" />
+    <Compile Include="Strategies\HiddenCandidates\HidenColumnSingleStrategy.cs" />
+    <Compile Include="Strategies\HiddenCandidates\HidenRowSingleStrategy.cs" />
     <Compile Include="Strategies\ISudokuStrategy.cs" />
-    <Compile Include="Strategies\HidenBoxSingleStrategy.cs" />
-    <Compile Include="Strategies\NakedSingleStrategy.cs" />
+    <Compile Include="Strategies\HiddenCandidates\HidenBoxSingleStrategy.cs" />
+    <Compile Include="Strategies\NakedCandidates\NakedSingleStrategy.cs" />
     <Compile Include="Strategies\SudokuStrategyBase.cs" />
     <Compile Include="Strategies\SudokuStrategyExtensions.cs" />
     <Compile Include="SudokuPuzzle.cs" />

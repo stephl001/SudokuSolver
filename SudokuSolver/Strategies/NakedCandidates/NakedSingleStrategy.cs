@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading;
 
-namespace SudokuSolver.Strategies
+namespace SudokuSolver.Strategies.NakedCandidates
 {
     public sealed class NakedSingleStrategy : SudokuStrategyBase
     {
