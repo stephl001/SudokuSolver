@@ -7,7 +7,7 @@ namespace SudokuSolver.Strategies
     {
         public override string Name { get; } = "Hidden Column Single";
 
-        protected override Func<SudokuPuzzle, int, IEnumerable<SudokuSquare>> ReadGroupHandler
+        protected override Func<SudokuPuzzle, int, IEnumerable<SudokuSquare>> ReadUnitHandler
         {
             get
             {

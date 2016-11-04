@@ -11,12 +11,12 @@ namespace SudokuSolver.Strategies
         {
             for (int i=0; i<SudokuPuzzle.MaxValue; i++)
             {
-                IEnumerable<int> allCandidates = ReadGroupHandler(puzzle, i).SelectMany(s => s.Candidates);
+                IEnumerable<int> allCandidates = ReadUnitHandler(puzzle, i).SelectMany(s => s.Candidates);
                 var group = allCandidates.GroupBy(c => c).Where(g => g.Count() == 1).FirstOrDefault();
                 if (group != null)
                 {
                     int hiddenCandidate = group.Key;
-                    SudokuSquare targetSquare = ReadGroupHandler(puzzle, i).Single(s => s.Candidates.Contains(hiddenCandidate));
+                    SudokuSquare targetSquare = ReadUnitHandler(puzzle, i).Single(s => s.Candidates.Contains(hiddenCandidate));
                     var newSquare = new SudokuSquare(targetSquare.Row, targetSquare.Column, hiddenCandidate);
 
                     return SudokuStrategyResult.FromValue(newSquare);
@@ -26,7 +26,7 @@ namespace SudokuSolver.Strategies
             return SudokuStrategyResult.NotFound;
         }
 
-        protected abstract Func<SudokuPuzzle,int,IEnumerable<SudokuSquare>> ReadGroupHandler
+        protected abstract Func<SudokuPuzzle,int,IEnumerable<SudokuSquare>> ReadUnitHandler
         {
             get;
         }
