@@ -53,5 +53,25 @@ namespace SudokuSolverTests
             result.AffectedSquares.ShouldBeEquivalentTo(squares);
             result.Candidates.ShouldBeEquivalentTo(candidates);
         }
+
+        [TestMethod]
+        public void TestKeepCandidates()
+        {
+            Action act = () => SudokuStrategyResult.FromOnlyPossibleCandidates(null, null);
+            act.ShouldThrow<ArgumentNullException>().And.ParamName.Should().Be("squares");
+
+            act = () => SudokuStrategyResult.FromOnlyPossibleCandidates(Enumerable.Empty<SudokuSquare>(), null);
+            act.ShouldThrow<ArgumentNullException>().And.ParamName.Should().Be("candidates");
+
+            SudokuSquare[] squares = new SudokuSquare[] { new SudokuSquare(0, 1, new int[] { 2, 5, 7 }) };
+            act = () => SudokuStrategyResult.FromOnlyPossibleCandidates(squares, new int[] { });
+            act.ShouldThrow<ArgumentOutOfRangeException>().And.ParamName.Should().Be("candidates");
+            
+            int[] candidates = new int[] { 2 };
+            var result = SudokuStrategyResult.FromOnlyPossibleCandidates(squares, candidates);
+            result.Result.Should().Be(StrategyResultOutcome.OnlyPossibleCandidatesFound);
+            result.AffectedSquares.ShouldBeEquivalentTo(squares);
+            result.Candidates.ShouldBeEquivalentTo(candidates);
+        }
     }
 }

@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
 namespace SudokuSolver.Strategies.HiddenCandidates
 {
-    public abstract class HiddenSingleStrategy : SudokuStrategyBase
+    public abstract class HiddenSingleStrategy : PerUnitStrategy
     {
         protected override SudokuStrategyResult PerformQuery(SudokuPuzzle puzzle, CancellationToken cancelationToken)
         {
@@ -24,11 +23,6 @@ namespace SudokuSolver.Strategies.HiddenCandidates
             }
 
             return SudokuStrategyResult.NotFound;
-        }
-
-        protected abstract Func<SudokuPuzzle,int,IEnumerable<SudokuSquare>> ReadUnitHandler
-        {
-            get;
         }
     }
 }

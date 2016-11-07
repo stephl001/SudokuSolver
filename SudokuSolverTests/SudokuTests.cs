@@ -14,7 +14,7 @@ namespace SudokuSolverTests
         private static SudokuPuzzle _noNakedSinglePuzzle;
         private static SudokuPuzzle _noHiddenBoxSinglePuzzle;
         private static SudokuPuzzle _hiddenBoxSinglePuzzle;
-        //private static SudokuPuzzle _hard2PuzzleSolution;
+        private static SudokuPuzzle _nakedPairPuzzle;
 
         [AssemblyInitialize]
         public static void Setup(TestContext context)
@@ -42,6 +42,10 @@ namespace SudokuSolverTests
             pt = PuzzleTest.Load("hiddenboxsingle");
             _hiddenBoxSinglePuzzle = new SudokuPuzzle(pt.Input);
             _hiddenBoxSinglePuzzle.IsValid.Should().BeTrue();
+
+            pt = PuzzleTest.Load("nakedpair");
+            _nakedPairPuzzle = new SudokuPuzzle(pt.Input);
+            _nakedPairPuzzle.IsValid.Should().BeTrue();
         }
 
         protected SudokuPuzzle EasyPuzzle
@@ -77,6 +81,11 @@ namespace SudokuSolverTests
         protected SudokuPuzzle HiddenBoxSinglePuzzle
         {
             get { return _hiddenBoxSinglePuzzle; }
+        }
+
+        protected SudokuPuzzle NakedPairPuzzle
+        {
+            get { return _nakedPairPuzzle; }
         }
     }
 }

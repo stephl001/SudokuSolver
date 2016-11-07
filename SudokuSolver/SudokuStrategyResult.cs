@@ -8,7 +8,8 @@ namespace SudokuSolver
     {
         NotFound,
         ValueFound,
-        ImpossibleCandidatesFound
+        ImpossibleCandidatesFound,
+        OnlyPossibleCandidatesFound
     }
 
     public sealed class SudokuStrategyResult
@@ -25,11 +26,11 @@ namespace SudokuSolver
             Result = StrategyResultOutcome.ValueFound;
         }
 
-        private SudokuStrategyResult(IEnumerable<SudokuSquare> squares, IEnumerable<int> candidates)
+        private SudokuStrategyResult(IEnumerable<SudokuSquare> squares, IEnumerable<int> candidates, StrategyResultOutcome outcome)
         {
             AffectedSquares = Array.AsReadOnly(squares.ToArray());
             Candidates = Array.AsReadOnly(candidates.ToArray());
-            Result = StrategyResultOutcome.ImpossibleCandidatesFound;
+            Result = outcome;
         }
 
         public StrategyResultOutcome Result { get; } = StrategyResultOutcome.NotFound;
@@ -64,7 +65,21 @@ namespace SudokuSolver
             if (localCandidates.Length == 0)
                 throw new ArgumentOutOfRangeException(nameof(candidates), "You cannot provide an empty collection of candidates.");
 
-            return new SudokuStrategyResult(squares, localCandidates);
+            return new SudokuStrategyResult(squares, localCandidates, StrategyResultOutcome.ImpossibleCandidatesFound);
+        }
+
+        public static SudokuStrategyResult FromOnlyPossibleCandidates(IEnumerable<SudokuSquare> squares, IEnumerable<int> candidates)
+        {
+            if (squares == null)
+                throw new ArgumentNullException(nameof(squares));
+            if (candidates == null)
+                throw new ArgumentNullException(nameof(candidates));
+
+            int[] localCandidates = candidates.ToArray();
+            if (localCandidates.Length == 0)
+                throw new ArgumentOutOfRangeException(nameof(candidates), "You cannot provide an empty collection of candidates.");
+
+            return new SudokuStrategyResult(squares, localCandidates, StrategyResultOutcome.OnlyPossibleCandidatesFound);
         }
     }
 }

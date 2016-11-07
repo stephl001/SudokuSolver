@@ -83,5 +83,21 @@ namespace SudokuSolverTests
             result.AffectedSquares.Should().HaveCount(1);
             result.AffectedSquares.Single().Should().Be(new SudokuSquare(8, 4, 6));
         }
+
+        [TestMethod]
+        public void TestNakedPair()
+        {
+            ISudokuStrategy strategy = new NakedRowPairStrategy();
+            strategy.Name.Should().Be("Naked Row Pair");
+
+            SudokuStrategyResult result = strategy.Query(NakedPairPuzzle);
+            result.Result.Should().Be(StrategyResultOutcome.OnlyPossibleCandidatesFound);
+            result.AffectedSquares.Should().HaveCount(2);
+            result.AffectedSquares.ShouldBeEquivalentTo(new SudokuSquare[]
+            {
+                new SudokuSquare(0, 1, new int[] { 1, 6 }),
+                new SudokuSquare(0, 2, new int[] { 1, 6 })
+            });
+        }
     }
 }
