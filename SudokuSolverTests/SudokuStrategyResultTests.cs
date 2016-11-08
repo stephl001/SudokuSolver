@@ -10,14 +10,6 @@ namespace SudokuSolverTests
     public class SudokuStrategyResultTests : SudokuTests
     {
         [TestMethod]
-        public void TestNotFound()
-        {
-            SudokuStrategyResult.NotFound.AffectedSquares.Should().BeEmpty();
-            SudokuStrategyResult.NotFound.Result.Should().Be(StrategyResultOutcome.NotFound);
-            SudokuStrategyResult.NotFound.Candidates.Should().BeEmpty();
-        }
-
-        [TestMethod]
         public void TestFoundValue()
         {
             Action act = () => SudokuStrategyResult.FromValue(null);
@@ -31,7 +23,6 @@ namespace SudokuSolverTests
             result.AffectedSquares.Should().HaveCount(1);
             result.AffectedSquares.Single().Should().Be(square);
             result.Result.Should().Be(StrategyResultOutcome.ValueFound);
-            SudokuStrategyResult.NotFound.Candidates.Should().BeEmpty();
         }
 
         [TestMethod]

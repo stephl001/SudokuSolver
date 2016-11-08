@@ -1,4 +1,4 @@
-﻿using System.Threading;
+﻿using System.Collections.Generic;
 
 namespace SudokuSolver.Strategies
 {
@@ -6,6 +6,6 @@ namespace SudokuSolver.Strategies
     {
         string Name { get; }
 
-        SudokuStrategyResult Query(SudokuPuzzle puzzle, CancellationToken cancellationToken);
+        IEnumerable<SudokuStrategyResult> Query(SudokuPuzzle puzzle);
     }
 }

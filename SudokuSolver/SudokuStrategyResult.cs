@@ -6,7 +6,6 @@ namespace SudokuSolver
 {
     public enum StrategyResultOutcome
     {
-        NotFound,
         ValueFound,
         ImpossibleCandidatesFound,
         OnlyPossibleCandidatesFound
@@ -14,8 +13,6 @@ namespace SudokuSolver
 
     public sealed class SudokuStrategyResult
     {
-        private readonly static SudokuStrategyResult _notFound = new SudokuStrategyResult();
-
         private SudokuStrategyResult()
         {
         }
@@ -33,16 +30,11 @@ namespace SudokuSolver
             Result = outcome;
         }
 
-        public StrategyResultOutcome Result { get; } = StrategyResultOutcome.NotFound;
+        public StrategyResultOutcome Result { get; }
 
         public IEnumerable<SudokuSquare> AffectedSquares { get; } = Enumerable.Empty<SudokuSquare>();
 
         public IEnumerable<int> Candidates { get; } = Enumerable.Empty<int>();
-
-        public static SudokuStrategyResult NotFound
-        {
-            get { return _notFound; }
-        }
 
         public static SudokuStrategyResult FromValue(SudokuSquare s)
         {

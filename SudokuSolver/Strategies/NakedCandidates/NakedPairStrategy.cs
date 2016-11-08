@@ -5,22 +5,28 @@ using System.Threading;
 
 namespace SudokuSolver.Strategies.NakedCandidates
 {
-    public abstract class NakedPairStrategy : PerUnitStrategy
+    public sealed class NakedPairStrategy : PerUnitStrategy
     {
-        protected override SudokuStrategyResult PerformQuery(SudokuPuzzle puzzle, CancellationToken cancelationToken)
+        public override string Name
         {
-            for (int i = 0; i < SudokuPuzzle.MaxValue; i++)
+            get { return "Naked Pair"; }
+        }
+
+        protected override IEnumerable<SudokuStrategyResult> PerformQuery(SudokuPuzzle puzzle)
+        {
+            foreach (Func<int, IEnumerable<SudokuSquare>> unitHandler in GetUnitHandlers(puzzle))
             {
-                SudokuSquare[] unitCandidateSquares = ReadUnitHandler(puzzle, i).Where(s => !s.IsValueSet).ToArray();
-                var groupCandidates = unitCandidateSquares.Where(s => s.Candidates.Count == 2).GroupBy(s => $"{s.Candidates[0]}{s.Candidates[1]}");
-                var group = groupCandidates.Where(g => g.Count() == 2).FirstOrDefault();
-                if (group != null)
+                for (int i = 0; i < SudokuPuzzle.MaxValue; i++)
                 {
-                    return SudokuStrategyResult.FromOnlyPossibleCandidates(group, group.First().Candidates);
+                    SudokuSquare[] unitCandidateSquares = unitHandler(i).Where(s => !s.IsValueSet).ToArray();
+                    var groupCandidates = unitCandidateSquares.Where(s => s.Candidates.Count == 2).GroupBy(s => $"{s.Candidates[0]}{s.Candidates[1]}");
+                    var group = groupCandidates.Where(g => g.Count() == 2).FirstOrDefault();
+                    if (group != null)
+                    {
+                        yield return SudokuStrategyResult.FromOnlyPossibleCandidates(group, group.First().Candidates);
+                    }
                 }
             }
-
-            return SudokuStrategyResult.NotFound;
         }
     }
 }

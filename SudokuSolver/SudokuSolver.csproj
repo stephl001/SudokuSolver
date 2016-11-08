@@ -41,18 +41,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Strategies\HiddenCandidates\HidenSingleStrategy.cs" />
-    <Compile Include="Strategies\HiddenCandidates\HidenColumnSingleStrategy.cs" />
-    <Compile Include="Strategies\HiddenCandidates\HidenRowSingleStrategy.cs" />
     <Compile Include="Strategies\ISudokuStrategy.cs" />
-    <Compile Include="Strategies\HiddenCandidates\HidenBoxSingleStrategy.cs" />
     <Compile Include="Strategies\NakedCandidates\NakedPairStrategy.cs" />
-    <Compile Include="Strategies\NakedCandidates\NakedColumnPair.cs" />
-    <Compile Include="Strategies\NakedCandidates\NakedBoxPair.cs" />
-    <Compile Include="Strategies\NakedCandidates\NakedRowPair.cs" />
     <Compile Include="Strategies\NakedCandidates\NakedSingleStrategy.cs" />
     <Compile Include="Strategies\PerUnitStrategy.cs" />
     <Compile Include="Strategies\SudokuStrategyBase.cs" />
-    <Compile Include="Strategies\SudokuStrategyExtensions.cs" />
     <Compile Include="SudokuPuzzle.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SudokuPuzzleExtensions.cs" />

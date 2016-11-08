@@ -12,8 +12,8 @@ namespace SudokuSolverTests
         private static SudokuPuzzle _hardPuzzle;
         private static SudokuPuzzle _hardPuzzleSolution;
         private static SudokuPuzzle _noNakedSinglePuzzle;
-        private static SudokuPuzzle _noHiddenBoxSinglePuzzle;
-        private static SudokuPuzzle _hiddenBoxSinglePuzzle;
+        private static SudokuPuzzle _noHiddenSinglePuzzle;
+        private static SudokuPuzzle _hiddenSinglePuzzle;
         private static SudokuPuzzle _nakedPairPuzzle;
 
         [AssemblyInitialize]
@@ -35,13 +35,13 @@ namespace SudokuSolverTests
             _noNakedSinglePuzzle = new SudokuPuzzle(pt.Input);
             _noNakedSinglePuzzle.IsValid.Should().BeTrue();
 
-            pt = PuzzleTest.Load("nohiddenboxsingle");
-            _noHiddenBoxSinglePuzzle = new SudokuPuzzle(pt.Input);
-            _noHiddenBoxSinglePuzzle.IsValid.Should().BeTrue();
+            pt = PuzzleTest.Load("nohiddensingle");
+            _noHiddenSinglePuzzle = new SudokuPuzzle(pt.Input);
+            _noHiddenSinglePuzzle.IsValid.Should().BeTrue();
 
-            pt = PuzzleTest.Load("hiddenboxsingle");
-            _hiddenBoxSinglePuzzle = new SudokuPuzzle(pt.Input);
-            _hiddenBoxSinglePuzzle.IsValid.Should().BeTrue();
+            pt = PuzzleTest.Load("hiddensingle");
+            _hiddenSinglePuzzle = new SudokuPuzzle(pt.Input);
+            _hiddenSinglePuzzle.IsValid.Should().BeTrue();
 
             pt = PuzzleTest.Load("nakedpair");
             _nakedPairPuzzle = new SudokuPuzzle(pt.Input);
@@ -73,14 +73,14 @@ namespace SudokuSolverTests
             get { return _noNakedSinglePuzzle; }
         }
 
-        protected SudokuPuzzle NoHiddenBoxSinglePuzzle
+        protected SudokuPuzzle NoHiddenSinglePuzzle
         {
-            get { return _noHiddenBoxSinglePuzzle; }
+            get { return _noHiddenSinglePuzzle; }
         }
 
-        protected SudokuPuzzle HiddenBoxSinglePuzzle
+        protected SudokuPuzzle HiddenSinglePuzzle
         {
-            get { return _hiddenBoxSinglePuzzle; }
+            get { return _hiddenSinglePuzzle; }
         }
 
         protected SudokuPuzzle NakedPairPuzzle

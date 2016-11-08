@@ -98,10 +98,10 @@
     <EmbeddedResource Include="puzzles\nonakedsingle.txt" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="puzzles\nohiddenboxsingle.txt" />
+    <EmbeddedResource Include="puzzles\nohiddensingle.txt" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="puzzles\hiddenboxsingle.txt" />
+    <EmbeddedResource Include="puzzles\hiddensingle.txt" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="puzzles\nakedpair.txt" />

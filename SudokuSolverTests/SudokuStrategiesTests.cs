@@ -6,6 +6,7 @@ using SudokuSolver;
 using System.Linq;
 using SudokuSolver.Strategies.NakedCandidates;
 using SudokuSolver.Strategies.HiddenCandidates;
+using System.Collections.Generic;
 
 namespace SudokuSolverTests
 {
@@ -30,70 +31,43 @@ namespace SudokuSolverTests
             ISudokuStrategy strategy = new NakedSingleStrategy();
             strategy.Name.Should().Be("Naked Single");
             
-            SudokuStrategyResult result = strategy.Query(NoNakedSinglePuzzle);
-            result.Result.Should().Be(StrategyResultOutcome.NotFound);
+            IEnumerable<SudokuStrategyResult> results = strategy.Query(NoNakedSinglePuzzle);
+            results.Should().BeEmpty();
 
-            result = strategy.Query(HardPuzzle);
-            result.Result.Should().Be(StrategyResultOutcome.ValueFound);
-            result.AffectedSquares.Should().HaveCount(1);
-            result.AffectedSquares.Single().Should().Be(new SudokuSquare(2, 3, 4));
+            results = strategy.Query(HardPuzzle);
+            results.Should().HaveCount(1);
+            results.Single().Result.Should().Be(StrategyResultOutcome.ValueFound);
+            results.Single().AffectedSquares.Should().HaveCount(1);
+            results.Single().AffectedSquares.Single().Should().Be(new SudokuSquare(2, 3, 4));
         }
 
         [TestMethod]
-        public void TestHiddenBoxSingle()
+        public void TestHiddenSingle()
         {
-            ISudokuStrategy strategy = new HiddenBoxSingleStrategy();
-            strategy.Name.Should().Be("Hidden Box Single");
+            ISudokuStrategy strategy = new HiddenSingleStrategy();
+            strategy.Name.Should().Be("Hidden Single");
             
-            SudokuStrategyResult result = strategy.Query(NoHiddenBoxSinglePuzzle);
-            result.Result.Should().Be(StrategyResultOutcome.NotFound);
+            IEnumerable<SudokuStrategyResult> results = strategy.Query(NoHiddenSinglePuzzle);
+            results.Should().BeEmpty();
             
-            result = strategy.Query(HiddenBoxSinglePuzzle);
-            result.Result.Should().Be(StrategyResultOutcome.ValueFound);
-            result.AffectedSquares.Should().HaveCount(1);
-            result.AffectedSquares.Single().Should().Be(new SudokuSquare(1, 3, 7));
-        }
-
-        [TestMethod]
-        public void TestHiddenRowSingle()
-        {
-            ISudokuStrategy strategy = new HiddenRowSingleStrategy();
-            strategy.Name.Should().Be("Hidden Row Single");
-
-            SudokuStrategyResult result = strategy.Query(NoHiddenBoxSinglePuzzle);
-            result.Result.Should().Be(StrategyResultOutcome.NotFound);
-
-            result = strategy.Query(HiddenBoxSinglePuzzle);
-            result.Result.Should().Be(StrategyResultOutcome.ValueFound);
-            result.AffectedSquares.Should().HaveCount(1);
-            result.AffectedSquares.Single().Should().Be(new SudokuSquare(1, 3, 7));
-        }
-
-        [TestMethod]
-        public void TestHiddenColumnSingle()
-        {
-            ISudokuStrategy strategy = new HiddenColumnSingleStrategy();
-            strategy.Name.Should().Be("Hidden Column Single");
-
-            SudokuStrategyResult result = strategy.Query(NoHiddenBoxSinglePuzzle);
-            result.Result.Should().Be(StrategyResultOutcome.NotFound);
-
-            result = strategy.Query(HiddenBoxSinglePuzzle);
-            result.Result.Should().Be(StrategyResultOutcome.ValueFound);
-            result.AffectedSquares.Should().HaveCount(1);
-            result.AffectedSquares.Single().Should().Be(new SudokuSquare(8, 4, 6));
+            results = strategy.Query(HiddenSinglePuzzle);
+            results.Should().HaveCount(10);
+            results.First().Result.Should().Be(StrategyResultOutcome.ValueFound);
+            results.First().AffectedSquares.Should().HaveCount(1);
+            results.First().AffectedSquares.Single().Should().Be(new SudokuSquare(1, 3, 7));
         }
 
         [TestMethod]
         public void TestNakedPair()
         {
-            ISudokuStrategy strategy = new NakedRowPairStrategy();
-            strategy.Name.Should().Be("Naked Row Pair");
+            ISudokuStrategy strategy = new NakedPairStrategy();
+            strategy.Name.Should().Be("Naked Pair");
 
-            SudokuStrategyResult result = strategy.Query(NakedPairPuzzle);
-            result.Result.Should().Be(StrategyResultOutcome.OnlyPossibleCandidatesFound);
-            result.AffectedSquares.Should().HaveCount(2);
-            result.AffectedSquares.ShouldBeEquivalentTo(new SudokuSquare[]
+            IEnumerable<SudokuStrategyResult> results = strategy.Query(NakedPairPuzzle);
+            results.Should().HaveCount(8);
+            results.First().Result.Should().Be(StrategyResultOutcome.OnlyPossibleCandidatesFound);
+            results.First().AffectedSquares.Should().HaveCount(2);
+            results.First().AffectedSquares.ShouldBeEquivalentTo(new SudokuSquare[]
             {
                 new SudokuSquare(0, 1, new int[] { 1, 6 }),
                 new SudokuSquare(0, 2, new int[] { 1, 6 })

@@ -5,9 +5,11 @@ namespace SudokuSolver.Strategies
 {
     public abstract class PerUnitStrategy : SudokuStrategyBase
     {
-        protected abstract Func<SudokuPuzzle, int, IEnumerable<SudokuSquare>> ReadUnitHandler
+        protected IEnumerable<Func<int, IEnumerable<SudokuSquare>>> GetUnitHandlers(SudokuPuzzle puzzle)
         {
-            get;
+            yield return i => puzzle.ReadRow(i);
+            yield return i => puzzle.ReadColumn(i);
+            yield return i => puzzle.ReadBox(i);
         }
     }
 }
