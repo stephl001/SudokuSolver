@@ -64,13 +64,53 @@ namespace SudokuSolverTests
             strategy.Name.Should().Be("Naked Pair");
 
             IEnumerable<SudokuStrategyResult> results = strategy.Query(NakedPairPuzzle);
-            results.Should().HaveCount(8);
-            results.First().Result.Should().Be(StrategyResultOutcome.OnlyPossibleCandidatesFound);
-            results.First().AffectedSquares.Should().HaveCount(2);
+            results.Should().HaveCount(5);
+            results.First().Result.Should().Be(StrategyResultOutcome.ImpossibleCandidatesFound);
+            results.First().AffectedSquares.Should().HaveCount(3);
             results.First().AffectedSquares.ShouldBeEquivalentTo(new SudokuSquare[]
             {
-                new SudokuSquare(0, 1, new int[] { 1, 6 }),
-                new SudokuSquare(0, 2, new int[] { 1, 6 })
+                new SudokuSquare(0, 3, new int[] { 1, 2, 5 }),
+                new SudokuSquare(0, 4, new int[] { 1, 2, 5, 6, 7 }),
+                new SudokuSquare(0, 5, new int[] { 2, 5, 6, 7 })
+            });
+        }
+
+        [TestMethod]
+        public void TestNakedTriple()
+        {
+            ISudokuStrategy strategy = new NakedTripleStrategy();
+            strategy.Name.Should().Be("Naked Triple");
+
+            IEnumerable<SudokuStrategyResult> results = strategy.Query(NakedTriplePuzzle);
+            results.Should().HaveCount(1);
+            results.First().Result.Should().Be(StrategyResultOutcome.ImpossibleCandidatesFound);
+            results.First().AffectedSquares.Should().HaveCount(5);
+            results.First().AffectedSquares.ShouldBeEquivalentTo(new SudokuSquare[]
+            {
+                new SudokuSquare(4, 0, new int[] { 4, 5, 6, 7, 9 }),
+                new SudokuSquare(4, 2, new int[] { 1, 5, 6, 7, 9 }),
+                new SudokuSquare(4, 6, new int[] { 1, 3, 5, 8, 9 }),
+                new SudokuSquare(4, 7, new int[] { 3, 4, 5, 6, 8, 9 }),
+                new SudokuSquare(4, 8, new int[] { 1, 5, 6, 8 })
+            });
+        }
+
+        [TestMethod]
+        public void TestNakedQuad()
+        {
+            ISudokuStrategy strategy = new NakedQuadStrategy();
+            strategy.Name.Should().Be("Naked Quad");
+
+            IEnumerable<SudokuStrategyResult> results = strategy.Query(NakedQuadPuzzle);
+            results.Should().HaveCount(1);
+            results.First().Result.Should().Be(StrategyResultOutcome.ImpossibleCandidatesFound);
+            results.First().AffectedSquares.Should().HaveCount(4);
+            results.First().AffectedSquares.ShouldBeEquivalentTo(new SudokuSquare[]
+            {
+                new SudokuSquare(0, 1, new int[] { 1, 2, 4, 5 }),
+                new SudokuSquare(0, 2, new int[] { 2, 4, 5, 7 }),
+                new SudokuSquare(1, 2, new int[] { 3, 5, 6, 7, 8 }),
+                new SudokuSquare(2, 2, new int[] { 3, 4, 6 })
             });
         }
     }

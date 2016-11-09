@@ -7,8 +7,7 @@ namespace SudokuSolver
     public enum StrategyResultOutcome
     {
         ValueFound,
-        ImpossibleCandidatesFound,
-        OnlyPossibleCandidatesFound
+        ImpossibleCandidatesFound
     }
 
     public sealed class SudokuStrategyResult
@@ -58,20 +57,6 @@ namespace SudokuSolver
                 throw new ArgumentOutOfRangeException(nameof(candidates), "You cannot provide an empty collection of candidates.");
 
             return new SudokuStrategyResult(squares, localCandidates, StrategyResultOutcome.ImpossibleCandidatesFound);
-        }
-
-        public static SudokuStrategyResult FromOnlyPossibleCandidates(IEnumerable<SudokuSquare> squares, IEnumerable<int> candidates)
-        {
-            if (squares == null)
-                throw new ArgumentNullException(nameof(squares));
-            if (candidates == null)
-                throw new ArgumentNullException(nameof(candidates));
-
-            int[] localCandidates = candidates.ToArray();
-            if (localCandidates.Length == 0)
-                throw new ArgumentOutOfRangeException(nameof(candidates), "You cannot provide an empty collection of candidates.");
-
-            return new SudokuStrategyResult(squares, localCandidates, StrategyResultOutcome.OnlyPossibleCandidatesFound);
         }
     }
 }

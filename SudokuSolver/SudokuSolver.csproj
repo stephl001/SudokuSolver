@@ -30,6 +30,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="LinqLib, Version=1.0.4.2, Culture=neutral, PublicKeyToken=100a413726ba3d7c, processorArchitecture=MSIL">
+      <HintPath>..\packages\LinqExtLibrary.1.0.4.2\lib\LinqLib.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -42,6 +46,9 @@
   <ItemGroup>
     <Compile Include="Strategies\HiddenCandidates\HidenSingleStrategy.cs" />
     <Compile Include="Strategies\ISudokuStrategy.cs" />
+    <Compile Include="Strategies\NakedCandidates\NakedCandidatesStrategyBase.cs" />
+    <Compile Include="Strategies\NakedCandidates\NakedQuadStrategy.cs" />
+    <Compile Include="Strategies\NakedCandidates\NakedTripleStrategy.cs" />
     <Compile Include="Strategies\NakedCandidates\NakedPairStrategy.cs" />
     <Compile Include="Strategies\NakedCandidates\NakedSingleStrategy.cs" />
     <Compile Include="Strategies\PerUnitStrategy.cs" />
@@ -52,6 +59,9 @@
     <Compile Include="SudokuSquare.cs" />
     <Compile Include="SudokuStrategyResult.cs" />
     <Compile Include="SudokuValidationError.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
