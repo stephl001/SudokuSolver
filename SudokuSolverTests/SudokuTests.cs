@@ -1,111 +1,53 @@
 ﻿using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SudokuSolver;
+using System.Linq;
+using System.Reflection;
+using System;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace SudokuSolverTests
 {
     [TestClass]
     public abstract class SudokuTests
     {
-        private static SudokuPuzzle _easyPuzzle;
-        private static SudokuPuzzle _easyPuzzleSolution;
-        private static SudokuPuzzle _hardPuzzle;
-        private static SudokuPuzzle _hardPuzzleSolution;
-        private static SudokuPuzzle _noNakedSinglePuzzle;
-        private static SudokuPuzzle _noHiddenSinglePuzzle;
-        private static SudokuPuzzle _hiddenSinglePuzzle;
-        private static SudokuPuzzle _nakedPairPuzzle;
-        private static SudokuPuzzle _nakedTriplePuzzle;
-        private static SudokuPuzzle _nakedQuadPuzzle;
+        private static IDictionary<string, SudokuPuzzle> _allPuzzles = new Dictionary<string, SudokuPuzzle>();
+        private static IDictionary<string, SudokuPuzzle> _allPuzzleSolutions = new Dictionary<string, SudokuPuzzle>();
 
         [AssemblyInitialize]
         public static void Setup(TestContext context)
         {
-            var pt = PuzzleTest.Load("easy");
-            _easyPuzzle = new SudokuPuzzle(pt.Input);
-            _easyPuzzle.IsValid.Should().BeTrue();
-            _easyPuzzleSolution = new SudokuPuzzle(pt.Solution);
-            _easyPuzzleSolution.ValidationErrors.Should().BeEmpty();
-
-            pt = PuzzleTest.Load("hard");
-            _hardPuzzle = new SudokuPuzzle(pt.Input);
-            _hardPuzzle.IsValid.Should().BeTrue();
-            _hardPuzzleSolution = new SudokuPuzzle(pt.Solution);
-            _hardPuzzleSolution.ValidationErrors.Should().BeEmpty();
-
-            pt = PuzzleTest.Load("nonakedsingle");
-            _noNakedSinglePuzzle = new SudokuPuzzle(pt.Input);
-            _noNakedSinglePuzzle.IsValid.Should().BeTrue();
-
-            pt = PuzzleTest.Load("nohiddensingle");
-            _noHiddenSinglePuzzle = new SudokuPuzzle(pt.Input);
-            _noHiddenSinglePuzzle.IsValid.Should().BeTrue();
-
-            pt = PuzzleTest.Load("hiddensingle");
-            _hiddenSinglePuzzle = new SudokuPuzzle(pt.Input);
-            _hiddenSinglePuzzle.IsValid.Should().BeTrue();
-
-            pt = PuzzleTest.Load("nakedpair");
-            _nakedPairPuzzle = new SudokuPuzzle(pt.Input);
-            _nakedPairPuzzle.IsValid.Should().BeTrue();
-
-            pt = PuzzleTest.Load("nakedtriple");
-            _nakedTriplePuzzle = new SudokuPuzzle(pt.Input);
-            _nakedTriplePuzzle.IsValid.Should().BeTrue();
-
-            pt = PuzzleTest.Load("nakedquads");
-            _nakedQuadPuzzle = new SudokuPuzzle(pt.Input);
-            _nakedQuadPuzzle.IsValid.Should().BeTrue();
+            string[] resourceNames = Assembly.GetExecutingAssembly().GetManifestResourceNames();
+            foreach (string resourceName in resourceNames)
+            {
+                PuzzleTest pt = PuzzleTest.Load(resourceName);
+                SudokuPuzzle puzzle = new SudokuPuzzle(pt.Input);
+                puzzle.IsValid.Should().Be(!resourceName.Contains("invalid"));
+                _allPuzzles.Add(PuzzleNameFromResourceName(resourceName), puzzle);
+                if (pt.Solution != null)
+                {
+                    puzzle = new SudokuPuzzle(pt.Solution);
+                    puzzle.IsValid.Should().BeTrue();
+                    _allPuzzleSolutions.Add(PuzzleNameFromResourceName(resourceName), puzzle);
+                }
+            }
         }
 
-        protected SudokuPuzzle EasyPuzzle
+        private static string PuzzleNameFromResourceName(string resourceName)
         {
-            get { return _easyPuzzle; }
+            var m = Regex.Match(resourceName, @"^SudokuSolverTests\.puzzles\.([a-zA-Z]+)\.txt$");
+            return m.Groups[1].Value;
         }
 
-        protected SudokuPuzzle EasyPuzzleSolution
+        protected SudokuPuzzle GetPuzzle(string name)
         {
-            get { return _easyPuzzleSolution; }
+            return _allPuzzles[name];
         }
 
-        protected SudokuPuzzle HardPuzzle
+        protected SudokuPuzzle GetPuzzleSolution(string name)
         {
-            get { return _hardPuzzle; }
-        }
-
-        protected SudokuPuzzle HardPuzzleSolution
-        {
-            get { return _hardPuzzleSolution; }
-        }
-
-        protected SudokuPuzzle NoNakedSinglePuzzle
-        {
-            get { return _noNakedSinglePuzzle; }
-        }
-
-        protected SudokuPuzzle NoHiddenSinglePuzzle
-        {
-            get { return _noHiddenSinglePuzzle; }
-        }
-
-        protected SudokuPuzzle HiddenSinglePuzzle
-        {
-            get { return _hiddenSinglePuzzle; }
-        }
-
-        protected SudokuPuzzle NakedPairPuzzle
-        {
-            get { return _nakedPairPuzzle; }
-        }
-
-        protected SudokuPuzzle NakedTriplePuzzle
-        {
-            get { return _nakedTriplePuzzle; }
-        }
-
-        protected SudokuPuzzle NakedQuadPuzzle
-        {
-            get { return _nakedQuadPuzzle; }
+            return _allPuzzleSolutions[name];
         }
     }
 }

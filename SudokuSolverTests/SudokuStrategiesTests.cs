@@ -21,7 +21,7 @@ namespace SudokuSolverTests
             Action act = () => strategy.Query(null);
             act.ShouldThrow<ArgumentNullException>().And.ParamName.Should().Be("puzzle");
 
-            act = () => strategy.Query(HardPuzzleSolution);
+            act = () => strategy.Query(GetPuzzleSolution("hard"));
             act.ShouldThrow<InvalidOperationException>().WithMessage("You cannot query a strategy result on a completed or invalid puzzle.");
         }
 
@@ -31,10 +31,10 @@ namespace SudokuSolverTests
             ISudokuStrategy strategy = new NakedSingleStrategy();
             strategy.Name.Should().Be("Naked Single");
             
-            IEnumerable<SudokuStrategyResult> results = strategy.Query(NoNakedSinglePuzzle);
+            IEnumerable<SudokuStrategyResult> results = strategy.Query(GetPuzzle("nonakedsingle"));
             results.Should().BeEmpty();
 
-            results = strategy.Query(HardPuzzle);
+            results = strategy.Query(GetPuzzle("hard"));
             results.Should().HaveCount(1);
             results.Single().Result.Should().Be(StrategyResultOutcome.ValueFound);
             results.Single().AffectedSquares.Should().HaveCount(1);
@@ -47,10 +47,10 @@ namespace SudokuSolverTests
             ISudokuStrategy strategy = new HiddenSingleStrategy();
             strategy.Name.Should().Be("Hidden Single");
             
-            IEnumerable<SudokuStrategyResult> results = strategy.Query(NoHiddenSinglePuzzle);
+            IEnumerable<SudokuStrategyResult> results = strategy.Query(GetPuzzle("nohiddensingle"));
             results.Should().BeEmpty();
             
-            results = strategy.Query(HiddenSinglePuzzle);
+            results = strategy.Query(GetPuzzle("hiddensingle"));
             results.Should().HaveCount(10);
             results.First().Result.Should().Be(StrategyResultOutcome.ValueFound);
             results.First().AffectedSquares.Should().HaveCount(1);
@@ -63,7 +63,7 @@ namespace SudokuSolverTests
             ISudokuStrategy strategy = new NakedPairStrategy();
             strategy.Name.Should().Be("Naked Pair");
 
-            IEnumerable<SudokuStrategyResult> results = strategy.Query(NakedPairPuzzle);
+            IEnumerable<SudokuStrategyResult> results = strategy.Query(GetPuzzle("nakedpair"));
             results.Should().HaveCount(5);
             results.First().Result.Should().Be(StrategyResultOutcome.ImpossibleCandidatesFound);
             results.First().AffectedSquares.Should().HaveCount(3);
@@ -81,7 +81,7 @@ namespace SudokuSolverTests
             ISudokuStrategy strategy = new NakedTripleStrategy();
             strategy.Name.Should().Be("Naked Triple");
 
-            IEnumerable<SudokuStrategyResult> results = strategy.Query(NakedTriplePuzzle);
+            IEnumerable<SudokuStrategyResult> results = strategy.Query(GetPuzzle("nakedtriple"));
             results.Should().HaveCount(1);
             results.First().Result.Should().Be(StrategyResultOutcome.ImpossibleCandidatesFound);
             results.First().AffectedSquares.Should().HaveCount(5);
@@ -101,7 +101,7 @@ namespace SudokuSolverTests
             ISudokuStrategy strategy = new NakedQuadStrategy();
             strategy.Name.Should().Be("Naked Quad");
 
-            IEnumerable<SudokuStrategyResult> results = strategy.Query(NakedQuadPuzzle);
+            IEnumerable<SudokuStrategyResult> results = strategy.Query(GetPuzzle("nakedquads"));
             results.Should().HaveCount(1);
             results.First().Result.Should().Be(StrategyResultOutcome.ImpossibleCandidatesFound);
             results.First().AffectedSquares.Should().HaveCount(4);

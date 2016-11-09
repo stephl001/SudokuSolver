@@ -20,18 +20,21 @@ namespace SudokuSolverTests
 
         internal int[,] Solution { get; }
 
-        internal static PuzzleTest Load(string name)
+        internal static PuzzleTest Load(string resourceName)
         {
             int[,] input = new int[9, 9];
-            int[,] solution = new int[9, 9];
+            int[,] solution = null;
 
-            using (Stream s = Assembly.GetExecutingAssembly().GetManifestResourceStream($"SudokuSolverTests.puzzles.{name}.txt"))
+            using (Stream s = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
             {
                 using (StreamReader reader = new StreamReader(s))
                 {
                     FillPuzzleArray(input, reader);
                     if (reader.ReadLine() != null)
+                    {
+                        solution = new int[9, 9];
                         FillPuzzleArray(solution, reader);
+                    }
                 }
             }
 
