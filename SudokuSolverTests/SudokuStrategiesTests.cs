@@ -113,5 +113,23 @@ namespace SudokuSolverTests
                 new SudokuSquare(2, 2, new int[] { 3, 4, 6 })
             });
         }
+
+        [TestMethod]
+        public void TestHiddenPair()
+        {
+            ISudokuStrategy strategy = new HiddenPairStrategy();
+            strategy.Name.Should().Be("Hidden Pair");
+
+            IEnumerable<SudokuStrategyResult> results = strategy.Query(GetPuzzle("hiddenpair"));
+            results.Should().HaveCount(2);
+            results.First().Result.Should().Be(StrategyResultOutcome.ImpossibleCandidatesFound);
+            results.First().AffectedSquares.Should().HaveCount(2);
+            results.First().AffectedSquares.ShouldBeEquivalentTo(new SudokuSquare[]
+            {
+                new SudokuSquare(0, 7, new int[] { 2, 3, 4, 5, 6, 7, 9 }),
+                new SudokuSquare(0, 8, new int[] { 3, 4, 5, 6, 7, 9 })
+            });
+            results.First().Candidates.ShouldBeEquivalentTo(new int[] { 2, 3, 4, 5, 9 });
+        }
     }
 }
