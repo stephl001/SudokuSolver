@@ -5,42 +5,16 @@ using System.Linq;
 
 namespace SudokuSolver.Strategies.HiddenCandidates
 {
-    public sealed class HiddenQuadStrategy : PerUnitStrategy
+    public sealed class HiddenQuadStrategy : HiddenCandidatesStrategyBase
     {
         public override string Name
         {
             get { return "Hidden Quad"; }
         }
 
-        protected override IEnumerable<SudokuStrategyResult> PerformQuery(SudokuPuzzle puzzle)
+        protected override int HiddenCandidatesCount
         {
-            foreach (Func<int, IEnumerable<SudokuSquare>> unitHandler in GetUnitHandlers(puzzle))
-            {
-                for (int i = 0; i < SudokuPuzzle.MaxValue; i++)
-                {
-                    SudokuSquare[] squaresWithCandidates = unitHandler(i).Where(s => !s.IsValueSet).ToArray();
-                    int[] allCandidates = squaresWithCandidates.SelectMany(s => s.Candidates).Distinct().ToArray();
-                    Dictionary<int,SudokuSquare[]> candidateToSquares = allCandidates.ToDictionary(c => c, c => squaresWithCandidates.Where(s => s.Candidates.Contains(c)).ToArray());
-                    var potentialEntries = candidateToSquares.Where(kvp => (kvp.Value.Length > 1) && (kvp.Value.Length <= 4)).ToArray();
-                    if (potentialEntries.Length < 4)
-                        continue;
-
-                    //Find if there exist three entries with the same squares for 3 different candidates.
-                    //If so, we just found hidden candidates.
-                    var entriesWithHiddenCandidates = potentialEntries.Combinations(4, false).FirstOrDefault(kvps => kvps.SelectMany(kvp => kvp.Value).Distinct().Count() == 4);
-                    if (entriesWithHiddenCandidates == null)
-                        continue;
-
-                    int[] hiddenCandidates = entriesWithHiddenCandidates.Select(kvp => kvp.Key).ToArray();
-                    int[] actualCandidates = entriesWithHiddenCandidates.SelectMany(kvp => kvp.Value).SelectMany(s => s.Candidates).Distinct().ToArray();
-                    int[] impossibleCandidates = actualCandidates.Except(hiddenCandidates).ToArray();
-                    if (impossibleCandidates.Length == 0)
-                        continue;
-
-                    var squaresWithHiddenCandidates = entriesWithHiddenCandidates.SelectMany(kvp => kvp.Value).Distinct();
-                    yield return SudokuStrategyResult.FromImpossibleCandidates(squaresWithHiddenCandidates, impossibleCandidates);
-                }
-            }
+            get { return 4; }
         }
     }
 }

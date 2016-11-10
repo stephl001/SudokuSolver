@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Strategies\HiddenCandidates\HiddenCandidatesStrategyBase.cs" />
     <Compile Include="Strategies\HiddenCandidates\HiddenQuadStrategy.cs" />
     <Compile Include="Strategies\HiddenCandidates\HiddenTripleStrategy.cs" />
     <Compile Include="Strategies\HiddenCandidates\HiddenPairStrategy.cs" />
