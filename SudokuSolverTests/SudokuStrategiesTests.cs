@@ -150,5 +150,25 @@ namespace SudokuSolverTests
             });
             results.First().Candidates.ShouldBeEquivalentTo(new int[] { 4, 7, 8, 9 });
         }
+
+        [TestMethod]
+        public void TestHiddenQuad()
+        {
+            ISudokuStrategy strategy = new HiddenQuadStrategy();
+            strategy.Name.Should().Be("Hidden Quad");
+
+            IEnumerable<SudokuStrategyResult> results = strategy.Query(GetPuzzle("hiddenquad")).ToArray();
+            results.Should().HaveCount(3);
+            results.First().Result.Should().Be(StrategyResultOutcome.ImpossibleCandidatesFound);
+            results.First().AffectedSquares.Should().HaveCount(4);
+            results.First().AffectedSquares.ShouldBeEquivalentTo(new SudokuSquare[]
+            {
+                new SudokuSquare(3, 3, new int[] { 1, 3, 4, 6, 7, 8, 9 }),
+                new SudokuSquare(3, 5, new int[] { 3, 4, 6, 7, 8, 9 }),
+                new SudokuSquare(5, 3, new int[] { 1, 3, 4, 7, 8, 9 }),
+                new SudokuSquare(5, 5, new int[] { 3, 4, 5, 7, 8, 9 })
+            });
+            results.First().Candidates.ShouldBeEquivalentTo(new int[] { 3, 5, 7, 8 });
+        }
     }
 }
