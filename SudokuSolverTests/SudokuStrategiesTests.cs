@@ -31,7 +31,7 @@ namespace SudokuSolverTests
             ISudokuStrategy strategy = new NakedSingleStrategy();
             strategy.Name.Should().Be("Naked Single");
             
-            IEnumerable<SudokuStrategyResult> results = strategy.Query(GetPuzzle("nonakedsingle"));
+            IEnumerable<SudokuStrategyResult> results = strategy.Query(GetPuzzle("nonakedsingle")).ToArray();
             results.Should().BeEmpty();
 
             results = strategy.Query(GetPuzzle("hard"));
@@ -47,7 +47,7 @@ namespace SudokuSolverTests
             ISudokuStrategy strategy = new HiddenSingleStrategy();
             strategy.Name.Should().Be("Hidden Single");
             
-            IEnumerable<SudokuStrategyResult> results = strategy.Query(GetPuzzle("nohiddensingle"));
+            IEnumerable<SudokuStrategyResult> results = strategy.Query(GetPuzzle("nohiddensingle")).ToArray();
             results.Should().BeEmpty();
             
             results = strategy.Query(GetPuzzle("hiddensingle"));
@@ -63,7 +63,7 @@ namespace SudokuSolverTests
             ISudokuStrategy strategy = new NakedPairStrategy();
             strategy.Name.Should().Be("Naked Pair");
 
-            IEnumerable<SudokuStrategyResult> results = strategy.Query(GetPuzzle("nakedpair"));
+            IEnumerable<SudokuStrategyResult> results = strategy.Query(GetPuzzle("nakedpair")).ToArray();
             results.Should().HaveCount(5);
             results.First().Result.Should().Be(StrategyResultOutcome.ImpossibleCandidatesFound);
             results.First().AffectedSquares.Should().HaveCount(3);
@@ -81,7 +81,7 @@ namespace SudokuSolverTests
             ISudokuStrategy strategy = new NakedTripleStrategy();
             strategy.Name.Should().Be("Naked Triple");
 
-            IEnumerable<SudokuStrategyResult> results = strategy.Query(GetPuzzle("nakedtriple"));
+            IEnumerable<SudokuStrategyResult> results = strategy.Query(GetPuzzle("nakedtriple")).ToArray();
             results.Should().HaveCount(1);
             results.First().Result.Should().Be(StrategyResultOutcome.ImpossibleCandidatesFound);
             results.First().AffectedSquares.Should().HaveCount(5);
@@ -101,7 +101,7 @@ namespace SudokuSolverTests
             ISudokuStrategy strategy = new NakedQuadStrategy();
             strategy.Name.Should().Be("Naked Quad");
 
-            IEnumerable<SudokuStrategyResult> results = strategy.Query(GetPuzzle("nakedquads"));
+            IEnumerable<SudokuStrategyResult> results = strategy.Query(GetPuzzle("nakedquads")).ToArray();
             results.Should().HaveCount(1);
             results.First().Result.Should().Be(StrategyResultOutcome.ImpossibleCandidatesFound);
             results.First().AffectedSquares.Should().HaveCount(4);
@@ -120,7 +120,7 @@ namespace SudokuSolverTests
             ISudokuStrategy strategy = new HiddenPairStrategy();
             strategy.Name.Should().Be("Hidden Pair");
 
-            IEnumerable<SudokuStrategyResult> results = strategy.Query(GetPuzzle("hiddenpair"));
+            IEnumerable<SudokuStrategyResult> results = strategy.Query(GetPuzzle("hiddenpair")).ToArray();
             results.Should().HaveCount(2);
             results.First().Result.Should().Be(StrategyResultOutcome.ImpossibleCandidatesFound);
             results.First().AffectedSquares.Should().HaveCount(2);
@@ -130,6 +130,25 @@ namespace SudokuSolverTests
                 new SudokuSquare(0, 8, new int[] { 3, 4, 5, 6, 7, 9 })
             });
             results.First().Candidates.ShouldBeEquivalentTo(new int[] { 2, 3, 4, 5, 9 });
+        }
+
+        [TestMethod]
+        public void TestHiddenTriple()
+        {
+            ISudokuStrategy strategy = new HiddenTripleStrategy();
+            strategy.Name.Should().Be("Hidden Triple");
+
+            IEnumerable<SudokuStrategyResult> results = strategy.Query(GetPuzzle("hiddentriple")).ToArray();
+            results.Should().HaveCount(2);
+            results.First().Result.Should().Be(StrategyResultOutcome.ImpossibleCandidatesFound);
+            results.First().AffectedSquares.Should().HaveCount(3);
+            results.First().AffectedSquares.ShouldBeEquivalentTo(new SudokuSquare[]
+            {
+                new SudokuSquare(0, 3, new int[] { 2, 4, 5, 6, 7, 8 }),
+                new SudokuSquare(0, 6, new int[] { 2, 4, 6, 9 }),
+                new SudokuSquare(0, 8, new int[] { 2, 4, 5, 7, 8, 9 })
+            });
+            results.First().Candidates.ShouldBeEquivalentTo(new int[] { 4, 7, 8, 9 });
         }
     }
 }
