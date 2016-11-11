@@ -174,7 +174,7 @@ namespace SudokuSolverTests
         [TestMethod]
         public void TestPointingCandidates()
         {
-            ISudokuStrategy strategy = new PointingCandidates();
+            ISudokuStrategy strategy = new PointingCandidatesStrategy();
             strategy.Name.Should().Be("Pointing Candidates");
 
             IEnumerable<SudokuStrategyResult> results = strategy.Query(GetPuzzle("pointingpairs")).ToArray();
@@ -188,6 +188,26 @@ namespace SudokuSolverTests
                 new SudokuSquare(1, 8, new int[] { 2, 3, 6, 7, 8 })
             });
             results.First().Candidates.ShouldBeEquivalentTo(new int[] { 2 });
+        }
+
+        [TestMethod]
+        public void TestBoxLineReduction()
+        {
+            ISudokuStrategy strategy = new BoxLineReductionStrategy();
+            strategy.Name.Should().Be("Box/Line Reduction");
+
+            IEnumerable<SudokuStrategyResult> results = strategy.Query(GetPuzzle("boxlinereduction")).ToArray();
+            results.Should().HaveCount(4);
+            results.Last().Result.Should().Be(StrategyResultOutcome.ImpossibleCandidatesFound);
+            results.Last().AffectedSquares.Should().HaveCount(4);
+            results.Last().AffectedSquares.ShouldBeEquivalentTo(new SudokuSquare[]
+            {
+                new SudokuSquare(1, 6, new int[] { 1, 2, 4, 7 }),
+                new SudokuSquare(1, 8, new int[] { 1, 4, 5, 7 }),
+                new SudokuSquare(2, 6, new int[] { 2, 4 }),
+                new SudokuSquare(2, 8, new int[] { 4, 5, 9 })
+            });
+            results.Last().Candidates.ShouldBeEquivalentTo(new int[] { 4 });
         }
     }
 }

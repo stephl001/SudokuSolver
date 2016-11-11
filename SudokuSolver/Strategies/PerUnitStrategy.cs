@@ -11,5 +11,11 @@ namespace SudokuSolver.Strategies
             yield return i => puzzle.ReadColumn(i);
             yield return i => puzzle.ReadBox(i);
         }
+
+        protected IEnumerable<Func<int, IEnumerable<SudokuSquare>>> GetRowColumnUnitHandlers(SudokuPuzzle puzzle)
+        {
+            yield return i => puzzle.ReadRow(i);
+            yield return i => puzzle.ReadColumn(i);
+        }
     }
 }

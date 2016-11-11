@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SudokuSolver.Strategies.NakedCandidates
 {
-    public class PointingCandidates : SudokuStrategyBase
+    public class PointingCandidatesStrategy : SudokuStrategyBase
     {
         public override string Name
         {

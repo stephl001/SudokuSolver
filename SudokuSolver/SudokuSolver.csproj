@@ -49,6 +49,7 @@
     <Compile Include="Strategies\HiddenCandidates\HiddenTripleStrategy.cs" />
     <Compile Include="Strategies\HiddenCandidates\HiddenPairStrategy.cs" />
     <Compile Include="Strategies\HiddenCandidates\HidenSingleStrategy.cs" />
+    <Compile Include="Strategies\IntersectionRemoval\BoxLineReductionstrategy.cs" />
     <Compile Include="Strategies\IntersectionRemoval\PointingCandidates.cs" />
     <Compile Include="Strategies\ISudokuStrategy.cs" />
     <Compile Include="Strategies\NakedCandidates\NakedCandidatesStrategyBase.cs" />
