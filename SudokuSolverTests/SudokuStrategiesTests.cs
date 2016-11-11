@@ -170,5 +170,24 @@ namespace SudokuSolverTests
             });
             results.First().Candidates.ShouldBeEquivalentTo(new int[] { 3, 5, 7, 8 });
         }
+
+        [TestMethod]
+        public void TestPointingCandidates()
+        {
+            ISudokuStrategy strategy = new PointingCandidates();
+            strategy.Name.Should().Be("Pointing Candidates");
+
+            IEnumerable<SudokuStrategyResult> results = strategy.Query(GetPuzzle("pointingpairs")).ToArray();
+            results.Should().HaveCount(9);
+            results.First().Result.Should().Be(StrategyResultOutcome.ImpossibleCandidatesFound);
+            results.First().AffectedSquares.Should().HaveCount(3);
+            results.First().AffectedSquares.ShouldBeEquivalentTo(new SudokuSquare[]
+            {
+                new SudokuSquare(1, 6, new int[] { 2, 3, 6, 7, 9 }),
+                new SudokuSquare(1, 7, new int[] { 2, 3, 5, 8, 9 }),
+                new SudokuSquare(1, 8, new int[] { 2, 3, 6, 7, 8 })
+            });
+            results.First().Candidates.ShouldBeEquivalentTo(new int[] { 2 });
+        }
     }
 }

@@ -121,6 +121,9 @@
   <ItemGroup>
     <EmbeddedResource Include="puzzles\hiddenquad.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="puzzles\pointingpairs.txt" />
+  </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>
