@@ -44,6 +44,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Strategies\Advanced\ReverseXWingContext.cs" />
+    <Compile Include="Strategies\Advanced\XWingContext.cs" />
+    <Compile Include="Strategies\Advanced\XWingStrategy.cs" />
     <Compile Include="Strategies\HiddenCandidates\HiddenCandidatesStrategyBase.cs" />
     <Compile Include="Strategies\HiddenCandidates\HiddenQuadStrategy.cs" />
     <Compile Include="Strategies\HiddenCandidates\HiddenTripleStrategy.cs" />

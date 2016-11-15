@@ -7,6 +7,7 @@ using System.Linq;
 using SudokuSolver.Strategies.NakedCandidates;
 using SudokuSolver.Strategies.HiddenCandidates;
 using System.Collections.Generic;
+using SudokuSolver.Strategies.Advanced;
 
 namespace SudokuSolverTests
 {
@@ -208,6 +209,51 @@ namespace SudokuSolverTests
                 new SudokuSquare(2, 8, new int[] { 4, 5, 9 })
             });
             results.Last().Candidates.ShouldBeEquivalentTo(new int[] { 4 });
+        }
+
+        [TestMethod]
+        public void TestXWing()
+        {
+            ISudokuStrategy strategy = new XWingStrategy();
+            strategy.Name.Should().Be("X-Wing");
+            
+            IEnumerable<SudokuStrategyResult> results = strategy.Query(GetPuzzle("xwing")).ToArray();
+            results.Should().HaveCount(1);
+            results.First().Result.Should().Be(StrategyResultOutcome.ImpossibleCandidatesFound);
+            results.First().AffectedSquares.Should().HaveCount(8);
+            results.First().AffectedSquares.ShouldBeEquivalentTo(new SudokuSquare[]
+            {
+                new SudokuSquare(0, 3, new int[] { 2, 3, 4, 7, 8 }),
+                new SudokuSquare(4, 3, new int[] { 2, 7, 8, 9 }),
+                new SudokuSquare(7, 3, new int[] { 3, 7, 8 }),
+                new SudokuSquare(3, 7, new int[] { 2, 3, 5, 7 }),
+                new SudokuSquare(4, 7, new int[] { 2, 3, 5, 7, 9 }),
+                new SudokuSquare(7, 7, new int[] { 3, 7, 8 }),
+                new SudokuSquare(8, 3, new int[] { 3, 4, 7, 8, 9 }),
+                new SudokuSquare(8, 7, new int[] { 3, 7, 8, 9 })
+            });
+            results.First().Candidates.ShouldBeEquivalentTo(new int[] { 7 });
+        }
+
+        [TestMethod]
+        public void TestReverseXWing()
+        {
+            ISudokuStrategy strategy = new XWingStrategy();
+            
+            IEnumerable<SudokuStrategyResult> results = strategy.Query(GetPuzzle("reversexwing")).ToArray();
+            results.Should().HaveCount(1);
+            results.First().Result.Should().Be(StrategyResultOutcome.ImpossibleCandidatesFound);
+            results.First().AffectedSquares.Should().HaveCount(6);
+            results.First().AffectedSquares.ShouldBeEquivalentTo(new SudokuSquare[]
+            {
+                new SudokuSquare(4, 1, new int[] { 2, 3, 5 }),
+                new SudokuSquare(4, 2, new int[] { 1, 2, 3,4, 5, 6 }),
+                new SudokuSquare(4, 6, new int[] { 2, 3, 4, 5, 8 }),
+                new SudokuSquare(4, 8, new int[] { 2, 3, 8 }),
+                new SudokuSquare(8, 3, new int[] { 2, 3, 4, 5, 6, 8 }),
+                new SudokuSquare(8, 8, new int[] { 2, 3, 6, 8 })
+            });
+            results.First().Candidates.ShouldBeEquivalentTo(new int[] { 2 });
         }
     }
 }

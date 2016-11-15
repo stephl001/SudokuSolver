@@ -127,6 +127,12 @@
   <ItemGroup>
     <EmbeddedResource Include="puzzles\boxlinereduction.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="puzzles\xwing.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="puzzles\reversexwing.txt" />
+  </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>
