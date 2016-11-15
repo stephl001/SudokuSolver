@@ -22,5 +22,20 @@ namespace SudokuSolver.Strategies
         }
 
         protected abstract IEnumerable<SudokuStrategyResult> PerformQuery(SudokuPuzzle puzzle);
+
+        protected int[] GetDistinctCandidates(IEnumerable<SudokuSquare> squares)
+        {
+            return squares.Where(s => !s.IsValueSet)
+                          .SelectMany(s => s.Candidates)
+                          .Distinct()
+                          .ToArray();
+        }
+
+        protected IDictionary<int, SudokuSquare[]> GetSquaresByCandidate(IEnumerable<SudokuSquare> squares)
+        {
+            int[] unitCandidates = GetDistinctCandidates(squares);
+            var candidatesToSquares = unitCandidates.ToDictionary(c => c, c => squares.Where(s => s.Candidates.Contains(c)).ToArray());
+            return candidatesToSquares;
+        }
     }
 }

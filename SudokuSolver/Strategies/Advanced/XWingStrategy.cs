@@ -39,8 +39,7 @@ namespace SudokuSolver.Strategies.Advanced
             for (int i = 0; i < SudokuPuzzle.MaxValue; i++)
             {
                 SudokuSquare[] squaresWithCandidates = readUnitHandler(i).Where(s => !s.IsValueSet).ToArray();
-                int[] unitCandidates = squaresWithCandidates.SelectMany(s => s.Candidates).Distinct().ToArray();
-                var candidatesToSquares = unitCandidates.ToDictionary(c => c, c => squaresWithCandidates.Where(s => s.Candidates.Contains(c)).ToArray());
+                var candidatesToSquares = GetSquaresByCandidate(squaresWithCandidates);
                 foreach (var kvp in candidatesToSquares.Where(kvp => kvp.Value.Length == nbLockedCandidates))
                 {
                     yield return new Tuple<int, SudokuSquare[]>(kvp.Key, kvp.Value);
