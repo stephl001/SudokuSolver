@@ -44,6 +44,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ISudokuPuzzleSolver.cs" />
+    <Compile Include="Solver.cs" />
+    <Compile Include="SolverResult.cs" />
     <Compile Include="Strategies\Advanced\ReverseXWingContext.cs" />
     <Compile Include="Strategies\Advanced\XWingContext.cs" />
     <Compile Include="Strategies\Advanced\XWingStrategy.cs" />

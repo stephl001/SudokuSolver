@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace SudokuSolver
 {
-    public class SudokuPuzzle
+    public class SudokuPuzzle : IEquatable<SudokuPuzzle>
     {
         private const int MaxRange = 9;
         private const int SqrtMaxRange = 3;
@@ -248,6 +248,25 @@ namespace SudokuSolver
             }
 
             return tmp;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as SudokuPuzzle);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hash = ReadAllSquares().Aggregate(0, (h, s) => h ^= s.GetHashCode());
+                return hash;
+            }
+        }
+
+        public bool Equals(SudokuPuzzle other)
+        {
+            return other.ReadAllSquares().SequenceEqual(ReadAllSquares());
         }
     }
 }

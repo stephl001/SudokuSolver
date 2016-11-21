@@ -288,5 +288,37 @@ namespace SudokuSolverTests
             newPuzzle.IsValid.Should().BeTrue();
             newPuzzle.ReadBox(0).Where(s => s.Candidates.Contains(7)).Should().BeEmpty();
         }
+
+        [TestMethod]
+        public void TestEquality()
+        {
+            var p1 = new SudokuPuzzle(new int[9, 9] {
+                {1,2,3,4,5,6,7,8,9},
+                {1,2,3,4,5,6,7,8,9},
+                {1,2,3,4,5,6,7,8,9},
+                {1,2,3,4,5,6,7,8,9},
+                {1,2,3,4,5,6,7,8,9},
+                {1,2,3,4,5,6,7,8,9},
+                {1,2,3,4,5,6,7,8,9},
+                {1,2,3,4,5,6,7,8,9},
+                {1,2,3,4,5,6,7,8,9}
+            });
+            var p2 = new SudokuPuzzle(new int[9, 9] {
+                {1,2,3,4,5,6,7,8,9},
+                {1,2,3,4,5,6,7,8,9},
+                {1,2,3,4,5,6,7,8,9},
+                {1,2,3,4,5,6,7,8,9},
+                {1,2,3,4,5,6,7,8,9},
+                {1,2,3,4,5,6,7,8,9},
+                {1,2,3,4,5,6,7,8,9},
+                {1,2,3,4,5,6,7,8,9},
+                {1,2,3,4,5,6,7,8,9}
+            });
+            ReferenceEquals(p1, p2).Should().BeFalse();
+            p1.Should().Be(p2);
+
+            p1.Should().NotBe(GetPuzzle("easy"));
+            p1.GetHashCode().Should().NotBe(GetPuzzle("easy").GetHashCode());
+        }
     }
 }

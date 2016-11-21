@@ -12,22 +12,20 @@ namespace SudokuSolver
 
     public sealed class SudokuStrategyResult
     {
-        private SudokuStrategyResult()
+        private SudokuStrategyResult(SudokuSquare s, string strategyName)
+            : this(new SudokuSquare[] { s }, new int[] { }, StrategyResultOutcome.ValueFound, strategyName)
         {
         }
 
-        private SudokuStrategyResult(SudokuSquare s)
-        {
-            AffectedSquares = Array.AsReadOnly(new SudokuSquare[] { s });
-            Result = StrategyResultOutcome.ValueFound;
-        }
-
-        private SudokuStrategyResult(IEnumerable<SudokuSquare> squares, IEnumerable<int> candidates, StrategyResultOutcome outcome)
+        private SudokuStrategyResult(IEnumerable<SudokuSquare> squares, IEnumerable<int> candidates, StrategyResultOutcome outcome, string strategyName)
         {
             AffectedSquares = Array.AsReadOnly(squares.ToArray());
             Candidates = Array.AsReadOnly(candidates.ToArray());
             Result = outcome;
+            StrategyName = strategyName;
         }
+
+        public string StrategyName { get; }
 
         public StrategyResultOutcome Result { get; }
 
@@ -35,17 +33,17 @@ namespace SudokuSolver
 
         public IEnumerable<int> Candidates { get; } = Enumerable.Empty<int>();
 
-        public static SudokuStrategyResult FromValue(SudokuSquare s)
+        public static SudokuStrategyResult FromValue(SudokuSquare s, string strategyName)
         {
             if (s == null)
                 throw new ArgumentNullException(nameof(s));
             if (!s.IsValueSet)
                 throw new ArgumentException("Argument must be a value square.", nameof(s));
 
-            return new SudokuStrategyResult(s);
+            return new SudokuStrategyResult(s, strategyName);
         }
 
-        public static SudokuStrategyResult FromImpossibleCandidates(IEnumerable<SudokuSquare> squares, IEnumerable<int> candidates)
+        public static SudokuStrategyResult FromImpossibleCandidates(IEnumerable<SudokuSquare> squares, IEnumerable<int> candidates, string strategyName)
         {
             if (squares == null)
                 throw new ArgumentNullException(nameof(squares));
@@ -56,7 +54,7 @@ namespace SudokuSolver
             if (localCandidates.Length == 0)
                 throw new ArgumentOutOfRangeException(nameof(candidates), "You cannot provide an empty collection of candidates.");
 
-            return new SudokuStrategyResult(squares, localCandidates, StrategyResultOutcome.ImpossibleCandidatesFound);
+            return new SudokuStrategyResult(squares, localCandidates, StrategyResultOutcome.ImpossibleCandidatesFound, strategyName);
         }
     }
 }

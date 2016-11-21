@@ -38,7 +38,7 @@ namespace SudokuSolver.Strategies.NakedCandidates
                             if (squaresWithimpossibleCandidates.Length == 0)
                                 continue;
 
-                            yield return SudokuStrategyResult.FromImpossibleCandidates(squaresWithimpossibleCandidates, new int[] { c });
+                            yield return SudokuStrategyResult.FromImpossibleCandidates(squaresWithimpossibleCandidates, new int[] { c }, Name);
                         }
                     }
                 }

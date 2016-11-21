@@ -16,7 +16,7 @@ namespace SudokuSolver.Strategies.NakedCandidates
                 yield break;
 
             var valueSquare = new SudokuSquare(square.Row, square.Column, square.Candidates.Single());
-            yield return SudokuStrategyResult.FromValue(valueSquare);
+            yield return SudokuStrategyResult.FromValue(valueSquare, Name);
         }
     }
 }

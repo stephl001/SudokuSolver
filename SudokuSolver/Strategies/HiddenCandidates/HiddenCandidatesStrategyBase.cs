@@ -37,7 +37,7 @@ namespace SudokuSolver.Strategies.HiddenCandidates
                         continue;
 
                     var squaresWithHiddenCandidates = entriesWithHiddenCandidates.SelectMany(kvp => kvp.Value).Distinct();
-                    yield return SudokuStrategyResult.FromImpossibleCandidates(squaresWithHiddenCandidates, impossibleCandidates);
+                    yield return SudokuStrategyResult.FromImpossibleCandidates(squaresWithHiddenCandidates, impossibleCandidates, Name);
                 }
             }
         }

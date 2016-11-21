@@ -29,7 +29,7 @@ namespace SudokuSolver.Strategies.NakedCandidates
                     var foundCandidates = nakedDoubles.SelectMany(s => s.Candidates).Distinct().ToArray();
                     var affectedSquares = unitCandidateSquares.Except(nakedDoubles).Where(s => s.Candidates.Intersect(foundCandidates).Any()).ToArray();
                     if (affectedSquares.Any())
-                        yield return SudokuStrategyResult.FromImpossibleCandidates(affectedSquares, foundCandidates);
+                        yield return SudokuStrategyResult.FromImpossibleCandidates(affectedSquares, foundCandidates, Name);
                 }
             }
         }

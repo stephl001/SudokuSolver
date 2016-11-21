@@ -31,7 +31,7 @@ namespace SudokuSolver.Strategies.NakedCandidates
                             if (boxSquaresWithInvalidCandidates.Any())
                             {
                                 //Found impossible candidates in box.
-                                yield return SudokuStrategyResult.FromImpossibleCandidates(boxSquaresWithInvalidCandidates, new int[] { c });
+                                yield return SudokuStrategyResult.FromImpossibleCandidates(boxSquaresWithInvalidCandidates, new int[] { c }, Name);
                             }
                         }
                     }

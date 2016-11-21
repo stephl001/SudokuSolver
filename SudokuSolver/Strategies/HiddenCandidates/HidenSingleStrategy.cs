@@ -26,7 +26,7 @@ namespace SudokuSolver.Strategies.HiddenCandidates
                         SudokuSquare targetSquare = unitHandler(i).Single(s => s.Candidates.Contains(hiddenCandidate));
                         var newSquare = new SudokuSquare(targetSquare.Row, targetSquare.Column, hiddenCandidate);
 
-                        yield return SudokuStrategyResult.FromValue(newSquare);
+                        yield return SudokuStrategyResult.FromValue(newSquare, Name);
                     }
                 }
             }

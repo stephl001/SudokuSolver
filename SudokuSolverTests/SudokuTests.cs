@@ -40,6 +40,11 @@ namespace SudokuSolverTests
             return m.Groups[1].Value;
         }
 
+        protected IEnumerable<SudokuPuzzle> GetPuzzles()
+        {
+            return Array.AsReadOnly(_allPuzzles.Values.ToArray());
+        }
+
         protected SudokuPuzzle GetPuzzle(string name)
         {
             return _allPuzzles[name];

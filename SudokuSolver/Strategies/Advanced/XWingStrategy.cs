@@ -28,7 +28,7 @@ namespace SudokuSolver.Strategies.Advanced
                     var squaresWithimpossibleCandidates = ctx.OppositeReadUnitHandler(unit1).Concat(ctx.OppositeReadUnitHandler(unit2)).Except(wingSquares).Where(s => s.Candidates.Contains(lockedCandidate)).ToArray();
                     if (squaresWithimpossibleCandidates.Any())
                     {
-                        yield return SudokuStrategyResult.FromImpossibleCandidates(squaresWithimpossibleCandidates, new int[] { lockedCandidate });
+                        yield return SudokuStrategyResult.FromImpossibleCandidates(squaresWithimpossibleCandidates, new int[] { lockedCandidate }, Name);
                     }
                 }
             }
