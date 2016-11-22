@@ -134,6 +134,9 @@
   <ItemGroup>
     <EmbeddedResource Include="puzzles\reversexwing.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="puzzles\swordfish.txt" />
+  </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>

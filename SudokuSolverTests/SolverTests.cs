@@ -35,7 +35,7 @@ namespace SudokuSolverTests
         public void TestCreation()
         {
             var solver = new Solver();
-            solver.LoadedStrategies.Should().Be(11);
+            solver.LoadedStrategies.Should().Be(12);
         }
 
         [TestMethod]
@@ -54,6 +54,14 @@ namespace SudokuSolverTests
             var finalPuzzle = solver.Solve(GetPuzzle("hard")).Last().NewPuzzle;
             finalPuzzle.IsCompleted.Should().BeTrue();
             GetPuzzleSolution("hard").Should().Be(finalPuzzle);
+        }
+
+        [TestMethod]
+        public void TestSolveAll()
+        {
+            var solver = new Solver();
+            int solvedPuzzles = GetPuzzles().Where(p => p.IsValid && !p.IsCompleted).Select(p => solver.Solve(p).Last().NewPuzzle.IsCompleted).Count(r => r);
+            solvedPuzzles.Should().BeGreaterOrEqualTo(12);
         }
     }
 }

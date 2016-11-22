@@ -13,19 +13,26 @@ namespace SudokuSolver.Strategies.Advanced
 
         protected override IEnumerable<SudokuStrategyResult> PerformQuery(SudokuPuzzle puzzle)
         {
-            XWingContext[] contexts = new XWingContext[] { new XWingContext(puzzle), new ReverseXWingContext(puzzle) };
+            XWingContext[] contexts = new XWingContext[] { CreateContext(puzzle), CreateReverseContext(puzzle) };
             foreach (XWingContext ctx in contexts)
             {
                 var groupedLockedCells = GetLockedCandidates(ctx.ReadUnitHandler, ctx.LockedCandidatesCount)
-                    .GroupBy(tuple => (new string(tuple.Item2.OrderBy(ctx.UnitSelector).Select(s => (char)('0' + ctx.UnitSelector(s))).ToArray())) + tuple.Item1)
+                    .GroupBy(tuple => tuple.Item1)
                     .Where(g => g.Count() == ctx.LockedCandidatesCount);
                 foreach (var g in groupedLockedCells)
                 {
-                    int unit1 = g.Key[0] - '0';
-                    int unit2 = g.Key[1] - '0';
+                    //How many distinct opposite column/row?
+                    int[] oppositeUnits = g.SelectMany(t => t.Item2.Select(ctx.UnitSelector)).Distinct().ToArray();
+                    if (oppositeUnits.Length != ctx.LockedCandidatesCount)
+                        continue;
+
                     SudokuSquare[] wingSquares = g.SelectMany(tuple => tuple.Item2).ToArray();
-                    int lockedCandidate = g.First().Item1;
-                    var squaresWithimpossibleCandidates = ctx.OppositeReadUnitHandler(unit1).Concat(ctx.OppositeReadUnitHandler(unit2)).Except(wingSquares).Where(s => s.Candidates.Contains(lockedCandidate)).ToArray();
+                    int lockedCandidate = g.Key;
+                    var squaresWithimpossibleCandidates = oppositeUnits.SelectMany(ctx.OppositeReadUnitHandler)
+                                                                       .Except(wingSquares)
+                                                                       .Where(s => s.Candidates.Contains(lockedCandidate))
+                                                                       .ToArray();
+                    
                     if (squaresWithimpossibleCandidates.Any())
                     {
                         yield return SudokuStrategyResult.FromImpossibleCandidates(squaresWithimpossibleCandidates, new int[] { lockedCandidate }, Name);
@@ -40,11 +47,21 @@ namespace SudokuSolver.Strategies.Advanced
             {
                 SudokuSquare[] squaresWithCandidates = readUnitHandler(i).Where(s => !s.IsValueSet).ToArray();
                 var candidatesToSquares = GetSquaresByCandidate(squaresWithCandidates);
-                foreach (var kvp in candidatesToSquares.Where(kvp => kvp.Value.Length == nbLockedCandidates))
+                foreach (var kvp in candidatesToSquares.Where(kvp => ((kvp.Value.Length > 1) && (kvp.Value.Length <= nbLockedCandidates))))
                 {
                     yield return new Tuple<int, SudokuSquare[]>(kvp.Key, kvp.Value);
                 }
             }
+        }
+
+        protected virtual XWingContext CreateContext(SudokuPuzzle puzzle)
+        {
+            return new XWingContext(puzzle);
+        }
+
+        protected virtual XWingContext CreateReverseContext(SudokuPuzzle puzzle)
+        {
+            return new ReverseXWingContext(puzzle);
         }
     }
 }

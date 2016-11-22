@@ -16,7 +16,7 @@ namespace SudokuSolver.Strategies.Advanced
             UnitSelector = unitSelector;
         }
 
-        public int LockedCandidatesCount { get; } = 2;
+        public virtual int LockedCandidatesCount { get; } = 2;
 
         public Func<int, IEnumerable<SudokuSquare>> ReadUnitHandler { get; }
 
